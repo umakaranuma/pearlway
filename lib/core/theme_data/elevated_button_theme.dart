@@ -1,40 +1,43 @@
-﻿import 'package:pearlway/core/theme_data/font.dart';
 import 'package:flutter/material.dart';
+import 'package:pearlway/core/theme_data/colour_scheme.dart';
 
 ElevatedButtonThemeData getElevatedButtonThemeData(BuildContext context) {
   return ElevatedButtonThemeData(
     style: ButtonStyle(
-      backgroundColor: WidgetStateProperty.resolveWith((state) {
-        if (state.contains(WidgetState.pressed)) {
-          return colorScheme.getSecondaryText(context); // Pressed state color
+      backgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return AppColors.bdr;
         }
-        return colorScheme.getPrimaryButton(context); // Default color
+        if (states.contains(WidgetState.pressed)) {
+          return AppColors.tealDk;
+        }
+        return AppColors.teal; // Primary btn by default
       }),
-      textStyle: WidgetStatePropertyAll(buildTextTheme(context).labelMedium),
+      foregroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return AppColors.ink4;
+        }
+        return Colors.white;
+      }),
+      textStyle: const WidgetStatePropertyAll(
+        TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          fontFamily: 'Plus Jakarta Sans',
+        ),
+      ),
       fixedSize: const WidgetStatePropertyAll(
-        Size.fromHeight(48), // Button height
+        Size.fromHeight(44),
       ),
       shape: WidgetStatePropertyAll(
         RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8), // Rounded corners
-          side: const BorderSide(
-            color: Color(0xffD0D5DD), // Border color
-            width: 1, // Border thickness
-          ),
+          borderRadius: BorderRadius.circular(12), // --r-md
         ),
       ),
       padding: const WidgetStatePropertyAll(
-        EdgeInsets.symmetric(vertical: 14, horizontal: 20), // Button padding
+        EdgeInsets.symmetric(vertical: 7, horizontal: 14),
       ),
-      elevation: WidgetStateProperty.resolveWith<double>((states) {
-        if (states.contains(WidgetState.pressed)) {
-          return 0; // Remove shadow when pressed
-        }
-        return 0; // Default elevation
-      }),
-      // shadowColor: const WidgetStatePropertyAll(
-      //   Colors.black38, // Shadow color
-      // ),
+      elevation: const WidgetStatePropertyAll(0),
     ),
   );
 }

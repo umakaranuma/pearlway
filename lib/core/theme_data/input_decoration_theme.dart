@@ -1,45 +1,36 @@
-﻿import 'package:pearlway/core/theme_data/font.dart';
+import 'package:pearlway/core/theme_data/colour_scheme.dart';
 import 'package:flutter/material.dart';
 
 InputDecorationTheme getInputDecorationTheme(BuildContext context) {
   return InputDecorationTheme(
     filled: true,
-    fillColor: Colors.white, // Background color
-    contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+    fillColor: AppColors.white, 
+    contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+    hintStyle: const TextStyle(
+      color: AppColors.ink4,
+      fontSize: 12.5,
+      fontWeight: FontWeight.w400,
+    ),
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: Color(0XffD0D5DD)),
+      borderRadius: BorderRadius.circular(12), // --r-md
+      borderSide: const BorderSide(color: AppColors.bdr2),
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(
-        color: Color(0XffD0D5DD),
-      ), // Border when not focused
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: AppColors.bdr2),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(
-        color: Colors.blue,
-        width: 2,
-      ), // Border when focused
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: AppColors.teal, width: 1.5),
     ),
     errorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(color: Colors.red, width: 2), // Error border
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: AppColors.red, width: 1.5), 
     ),
     focusedErrorBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8),
-      borderSide: const BorderSide(
-        color: Colors.red,
-        width: 2,
-      ), // Focused error border
+      borderRadius: BorderRadius.circular(12),
+      borderSide: const BorderSide(color: AppColors.red, width: 1.5), 
     ),
-    errorStyle: buildTextTheme(
-      context,
-    ).bodySmall?.copyWith(color: colorScheme.getError(context)),
-    hintStyle: buildTextTheme(
-      context,
-    ).labelSmall!.copyWith(color: colorScheme.getPrimaryBorder(context)),
-    constraints: const BoxConstraints(minHeight: 30), // Global height
+    constraints: const BoxConstraints(minHeight: 40),
   );
 }

@@ -1,80 +1,80 @@
-﻿import 'package:pearlway/core/theme_data/colour_scheme.dart';
 import 'package:flutter/material.dart';
-
-CustomColourScheme colorScheme = CustomColourScheme();
+import 'package:google_fonts/google_fonts.dart';
+import 'package:pearlway/core/theme_data/colour_scheme.dart';
 
 TextTheme buildTextTheme(BuildContext context) {
-  return TextTheme(
-    //TITLE
-    titleLarge: TextStyle(
-      fontSize: 25,
+  final baseTheme = GoogleFonts.plusJakartaSansTextTheme(Theme.of(context).textTheme);
+  final displayTheme = GoogleFonts.playfairDisplayTextTheme();
+  
+  return baseTheme.copyWith(
+    // TITLE / DISPLAY (Serif)
+    displayLarge: displayTheme.displayLarge?.copyWith(
+      color: AppColors.ink,
+      fontWeight: FontWeight.w700,
+    ),
+    displayMedium: displayTheme.displayMedium?.copyWith(
+      color: AppColors.ink,
+      fontWeight: FontWeight.w700,
+    ),
+    displaySmall: displayTheme.displaySmall?.copyWith(
+      color: AppColors.ink,
+      fontWeight: FontWeight.w700,
+    ),
+    
+    // HEADLINE (Sans)
+    headlineLarge: baseTheme.headlineLarge?.copyWith(
+      color: AppColors.ink,
+      fontWeight: FontWeight.w700,
+    ),
+    headlineMedium: baseTheme.headlineMedium?.copyWith(
+      color: AppColors.ink,
+      fontWeight: FontWeight.w700,
+    ),
+    headlineSmall: baseTheme.headlineSmall?.copyWith(
+      color: AppColors.ink,
       fontWeight: FontWeight.w600,
-      color: colorScheme.getPrimaryText(context),
-    ),
-    titleSmall: TextStyle(
-      fontSize: 15,
-      fontWeight: FontWeight.w300,
-      color: colorScheme.getPrimaryText(context),
-    ),
-    titleMedium: TextStyle(
-      fontSize: 15,
-      fontWeight: FontWeight.w400,
-      color: colorScheme.getPrimaryText(context),
     ),
 
-    //HEADLINE
-    headlineLarge: TextStyle(
-      fontSize: 20,
-      fontWeight: FontWeight.w500,
-      color: colorScheme.getPrimaryColor(context),
+    // TITLES (Sans)
+    titleLarge: baseTheme.titleLarge?.copyWith(
+      color: AppColors.ink,
+      fontWeight: FontWeight.w700,
+    ),
+    titleMedium: baseTheme.titleMedium?.copyWith(
+      color: AppColors.ink,
+      fontWeight: FontWeight.w600,
+    ),
+    titleSmall: baseTheme.titleSmall?.copyWith(
+      color: AppColors.ink,
+      fontWeight: FontWeight.w600,
     ),
 
-    //LABEL
-    labelLarge: TextStyle(
-      fontSize: 48,
-      fontWeight: FontWeight.w500,
-      color: colorScheme.getPrimaryText(context),
+    // BODY (Sans)
+    bodyLarge: baseTheme.bodyLarge?.copyWith(
+      color: AppColors.ink2,
+    ),
+    bodyMedium: baseTheme.bodyMedium?.copyWith(
+      color: AppColors.ink2,
+    ),
+    bodySmall: baseTheme.bodySmall?.copyWith(
+      color: AppColors.ink3,
     ),
 
-    // labelMedium: TextStyle(
-    //   fontSize: 16,
-    //   fontWeight: FontWeight.w600,
-    //   color: colorScheme.getPrimaryButtonText(context), // Primary button text
-    // ),
-    labelSmall: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-      color: colorScheme.getSecondaryText(context),
+    // LABELS / UI (Sans)
+    labelLarge: baseTheme.labelLarge?.copyWith(
+      color: AppColors.ink,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.1,
     ),
-
-    //DISPLAY
-    displayMedium: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-      color: colorScheme.getSecondaryText(context),
+    labelMedium: baseTheme.labelMedium?.copyWith(
+      color: AppColors.ink3,
+      fontWeight: FontWeight.w600,
+      letterSpacing: 0.1,
     ),
-
-    displaySmall: TextStyle(
-      fontSize: 15,
-      fontWeight: FontWeight.w500,
-      color: colorScheme.getSecondaryText(context),
+    labelSmall: baseTheme.labelSmall?.copyWith(
+      color: AppColors.ink4,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 1.0, // Represents uppercase labels like .slbl (0.06em)
     ),
-
-    // // BUTTON TEXT STYLES
-    // bodyLarge: TextStyle(
-    //   fontSize: 14,
-    //   fontWeight: FontWeight.w600,
-    //   color: colorScheme.getPrimaryButtonText(context), // Primary button text
-    // ),
-    // bodyMedium: TextStyle(
-    //   fontSize: 14,
-    //   fontWeight: FontWeight.w500,
-    //   color: colorScheme.getSecondaryButtonText(context), // Secondary button text
-    // ),
-    // bodySmall: TextStyle(
-    //   fontSize: 14,
-    //   fontWeight: FontWeight.w400,
-    //   color: colorScheme.getSecondaryText(context),
-    // ),
   );
 }
