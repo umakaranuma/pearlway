@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PearlWay — Complete UI Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --teal:#0D7377;--teal-dk:#084D50;--teal-lt:#14BDBC;--teal-bg:#E8F6F6;
+  --amber:#E8874A;--amber-lt:#FFF0E6;--amber-dk:#B85E28;
+  --gold:#D4A843;--gold-lt:#FFF8E7;
+  --cream:#FDFAF5;--white:#FFFFFF;
+  --ink:#1A2422;--ink2:#2D3F3D;--ink3:#4A5E5C;--ink4:#7A9190;--ink5:#A8BFBE;
+  --surf:#F4F8F8;--bdr:#DDE8E8;--bdr2:#C5D7D7;
+  --green:#2A9D5C;--red:#D94F3D;
+  --r-sm:8px;--r-md:12px;--r-lg:18px;--r-xl:24px;--r-pill:999px;
+  --sh:0 4px 20px rgba(13,115,119,.13);
+  --font-d:'Playfair Display',Georgia,serif;
+  --font-b:'Plus Jakarta Sans',system-ui,sans-serif;
+  --font-m:'JetBrains Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:var(--font-b);background:#CDD8D8;color:var(--ink);-webkit-font-smoothing:antialiased;min-height:100vh}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:var(--ink5);border-radius:4px}
+
+/* ── TOP NAV ── */
+.topnav{background:var(--ink);display:flex;align-items:center;gap:0;padding:0;position:sticky;top:0;z-index:100;overflow-x:auto}
+.tn-logo{padding:14px 20px;font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--teal-lt);white-space:nowrap;border-right:1px solid rgba(255,255,255,.08)}
+.tn-group{display:flex;align-items:center;padding:0 8px;gap:2px;border-right:1px solid rgba(255,255,255,.08)}
+.tn-label{font-size:9px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;white-space:nowrap}
+.tn-btn{padding:10px 14px;font-size:12px;font-weight:500;color:rgba(255,255,255,.5);cursor:pointer;border-radius:var(--r-sm);white-space:nowrap;transition:all .15s;border:none;background:transparent;font-family:var(--font-b)}
+.tn-btn:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.06)}
+.tn-btn.on{color:var(--teal-lt);background:rgba(20,189,188,.12);font-weight:600}
+.tn-badge{background:var(--amber);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:var(--r-pill);margin-left:4px}
+
+/* ── CANVAS ── */
+.canvas{padding:24px;display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap}
+.screen-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;animation:fadeUp .3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.screen-label{font-size:10px;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.08em;text-align:center}
+.screen-sublabel{font-size:10px;color:var(--ink4);text-align:center;margin-top:-6px}
+
+/* ── MOBILE FRAME ── */
+.mframe{background:#1A2422;border-radius:42px;padding:10px;box-shadow:var(--sh),0 0 0 1px rgba(255,255,255,.05);position:relative;flex-shrink:0}
+.mframe::before{content:'';position:absolute;top:14px;left:50%;transform:translateX(-50%);width:72px;height:5px;background:rgba(255,255,255,.12);border-radius:3px;z-index:10}
+.mscreen{width:260px;height:520px;background:var(--white);border-radius:33px;overflow:hidden;position:relative;display:flex;flex-direction:column}
+
+/* ── DESKTOP FRAME ── */
+.dframe{background:#1A2422;border-radius:12px;padding:8px 8px 4px;box-shadow:var(--sh);flex-shrink:0}
+.dframe::before{content:'';display:block;height:18px;background:#232D1A;border-radius:6px 6px 0 0;margin:-8px -8px 6px;display:flex;align-items:center;padding:0 10px}
+.dscreen{width:720px;background:var(--white);border-radius:6px;overflow:hidden}
+
+/* ── COMMON COMPONENTS ── */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:var(--r-pill);font-size:10.5px;font-weight:600;white-space:nowrap}
+.b-teal{background:var(--teal-bg);color:var(--teal-dk)}
+.b-amber{background:var(--amber-lt);color:var(--amber-dk)}
+.b-green{background:#E8F8EE;color:#1A6B3A}
+.b-red{background:#FDECEA;color:#9B2335}
+.b-gray{background:var(--surf);color:var(--ink3)}
+.b-gold{background:var(--gold-lt);color:#8A6500}
+.b-purple{background:#F0EEFF;color:#4A3AAA}
+.b-white{background:rgba(255,255,255,.2);color:#fff}
+
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--r-md);font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--bdr2);background:var(--white);color:var(--ink2);font-family:var(--font-b);transition:all .14s;white-space:nowrap}
+.btn:hover{border-color:var(--teal);color:var(--teal)}
+.btn.primary{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.primary:hover{background:var(--teal-dk);border-color:var(--teal-dk)}
+.btn.amber{background:var(--amber);border-color:var(--amber);color:#fff}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--ink3)}
+.btn.ghost:hover{background:var(--surf)}
+.btn.sm{padding:5px 10px;font-size:11px}
+.btn.xs{padding:3px 7px;font-size:10.5px}
+.btn.outline-white{border-color:rgba(255,255,255,.4);color:#fff;background:transparent}
+.btn.outline-white:hover{background:rgba(255,255,255,.15)}
+.bicon{width:30px;height:30px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-sm);border:1px solid var(--bdr);background:var(--white);color:var(--ink3);cursor:pointer;transition:all .14s;font-size:14px}
+.bicon:hover{border-color:var(--teal);color:var(--teal)}
+
+.fi{padding:8px 11px;border:1px solid var(--bdr2);border-radius:var(--r-md);font-size:12.5px;color:var(--ink);background:var(--white);outline:none;width:100%;font-family:var(--font-b)}
+.fi:focus{border-color:var(--teal)}
+.fsel{padding:8px 11px;border:1px solid var(--bdr2);border-radius:var(--r-md);font-size:12.5px;color:var(--ink);background:var(--white);outline:none;width:100%;font-family:var(--font-b);cursor:pointer}
+.flbl{font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:4px;display:block}
+.fgrp{display:flex;flex-direction:column;margin-bottom:10px}
+
+.card{background:var(--white);border:1px solid var(--bdr);border-radius:var(--r-lg);padding:14px 16px}
+.ctitle{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:10px}
+
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;padding:8px 12px;font-size:10px;font-weight:700;color:var(--ink4);background:var(--surf);border-bottom:1px solid var(--bdr);text-transform:uppercase;letter-spacing:.05em}
+tbody td{padding:10px 12px;font-size:12px;color:var(--ink2);border-bottom:1px solid var(--bdr)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#F5FAFA}
+.td-n{font-weight:600;color:var(--ink)}
+.td-s{font-size:10.5px;color:var(--ink4)}
+.muted{color:var(--ink4)}
+.bold{font-weight:600}
+.mono{font-family:var(--font-m);font-size:11px}
+
+.tog{width:36px;height:20px;border-radius:10px;background:var(--bdr2);position:relative;cursor:pointer;flex-shrink:0;transition:background .18s;display:inline-block}
+.tog.on{background:var(--teal)}
+.tog::after{content:'';width:14px;height:14px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:left .18s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.tog.on::after{left:19px}
+
+.stat{background:var(--white);border:1px solid var(--bdr);border-radius:var(--r-lg);padding:14px 16px}
+.slbl{font-size:10px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.sval{font-family:var(--font-d);font-size:24px;font-weight:700;color:var(--ink);line-height:1}
+.sval.t{color:var(--teal)}.sval.a{color:var(--amber)}.sval.g{color:var(--green)}
+.sdelta{font-size:10.5px;margin-top:5px}
+.up{color:var(--green)}.dn{color:var(--red)}.neu{color:var(--ink4)}
+
+.pbar{height:5px;background:var(--teal-bg);border-radius:3px;overflow:hidden;margin-top:5px}
+.pfill{height:100%;border-radius:3px;background:var(--teal)}
+
+/* ── MOBILE COMMON ── */
+.mhdr{flex-shrink:0}
+.mbody{flex:1;overflow-y:auto;overflow-x:hidden}
+.mfooter{flex-shrink:0}
+.mnav{background:var(--white);border-top:1px solid var(--bdr);display:flex;padding:2px 0 6px}
+.mnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;cursor:pointer;font-size:9px;color:var(--ink4);font-weight:500}
+.mnav-item.on{color:var(--teal)}
+.mnav-icon{font-size:18px;line-height:1}
+.mtopbar{display:flex;align-items:center;justify-content:space-between;padding:44px 14px 12px;background:var(--teal)}
+.mtopbar.dark{background:var(--ink)}
+.mtopbar.white{background:var(--white);padding-top:44px;border-bottom:1px solid var(--bdr)}
+.mhero{background:linear-gradient(160deg,var(--teal-dk),var(--teal));padding:44px 14px 18px}
+.mlogo{font-family:var(--font-d);font-size:18px;font-weight:700;color:#fff}
+.msub{font-size:10.5px;color:rgba(255,255,255,.65);margin-top:1px}
+.msearch{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:10px;padding:9px 12px;display:flex;align-items:center;gap:8px;margin-top:12px}
+.msearch span{font-size:11.5px;color:rgba(255,255,255,.7)}
+.mpill{padding:4px 11px;border-radius:var(--r-pill);font-size:10.5px;font-weight:600;border:1.5px solid var(--bdr2);background:var(--white);color:var(--ink2);cursor:pointer;white-space:nowrap;transition:all .12s}
+.mpill.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.mcat{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;flex-shrink:0}
+.mcicon{width:48px;height:48px;border-radius:13px;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;font-size:20px;transition:all .15s}
+.mcat.on .mcicon{background:var(--teal)}
+.mclbl{font-size:9.5px;color:var(--ink3);font-weight:500;white-space:nowrap}
+.mcard{background:var(--white);border-radius:13px;overflow:hidden;border:1px solid var(--bdr);margin-bottom:9px}
+.mcimg{height:100px;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;font-size:32px;position:relative}
+.mcbody{padding:10px 11px}
+.mcname{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.mcloc{font-size:10.5px;color:var(--ink4);margin-bottom:6px;display:flex;align-items:center;gap:3px}
+.mcprice{font-family:var(--font-d);font-size:15px;font-weight:700;color:var(--teal)}
+.mcrating{font-size:10.5px;color:var(--ink3)}
+.msticker{position:absolute;top:7px;left:7px;background:var(--amber);color:#fff;font-size:8.5px;font-weight:700;padding:2px 7px;border-radius:var(--r-pill)}
+.msticker.teal{background:var(--teal)}
+.msec{font-size:10px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.07em;padding:12px 14px 6px}
+.mrow{padding:0 14px}
+.mpad{padding:0 14px}
+.mveh{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr)}
+.mveh:last-child{border-bottom:none}
+.mvicon{width:42px;height:42px;border-radius:10px;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.mvname{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:1px}
+.mvsub{font-size:10px;color:var(--ink4)}
+.mvprice{font-family:var(--font-d);font-size:14px;font-weight:700;color:var(--teal);margin-left:auto;flex-shrink:0;text-align:right}
+.mspot{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bdr)}
+.mspot:last-child{border-bottom:none}
+.msimg{width:48px;height:48px;border-radius:10px;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.msname{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:1px}
+.msdist{font-size:10px;color:var(--ink4)}
+.msentry{font-size:10px;color:var(--teal);font-weight:600;margin-top:1px}
+.mbkcard{background:var(--white);border:1px solid var(--bdr);border-radius:12px;padding:11px 12px;margin-bottom:9px}
+.mbkname{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:2px}
+.mbkdate{font-size:10.5px;color:var(--ink4);margin-bottom:6px}
+.mdetailhdr{background:linear-gradient(160deg,var(--teal-dk),var(--teal));padding:44px 14px 18px;position:relative}
+.mback{position:absolute;top:44px;left:12px;width:26px;height:26px;background:rgba(255,255,255,.18);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;cursor:pointer;flex-shrink:0}
+.mdetimg{font-size:50px;text-align:center;margin-bottom:8px}
+.mdetname{font-family:var(--font-d);font-size:17px;font-weight:700;color:#fff}
+.mdetloc{font-size:10.5px;color:rgba(255,255,255,.7);margin-top:2px}
+.mchip{padding:3px 9px;border-radius:var(--r-pill);background:rgba(255,255,255,.15);color:rgba(255,255,255,.85);font-size:9.5px;font-weight:500}
+.mamenity{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--bdr);font-size:11.5px;color:var(--ink2)}
+.mamenity:last-child{border-bottom:none}
+.maicon{font-size:15px;width:24px;text-align:center}
+.mbookbar{background:var(--white);border-top:1px solid var(--bdr);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-shrink:0}
+.mbookprice{font-family:var(--font-d);font-size:17px;font-weight:700;color:var(--teal)}
+.mpriceSub{font-size:9.5px;color:var(--ink4)}
+.mbtn{background:var(--teal);color:#fff;border:none;border-radius:10px;padding:10px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-b)}
+.mform-input{padding:9px 12px;border:1px solid var(--bdr2);border-radius:10px;font-size:12px;color:var(--ink);background:var(--white);outline:none;width:100%;font-family:var(--font-b)}
+.mform-input:focus{border-color:var(--teal)}
+.mmap{height:110px;background:linear-gradient(135deg,#C8E2E2,#B8D5D5);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.mrating-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr);font-size:11.5px}
+.mrating-row:last-child{border-bottom:none}
+.mnotif{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--bdr)}
+.mnotif:last-child{border-bottom:none}
+.mnotif-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.mnotif-title{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:1px}
+.mnotif-sub{font-size:10.5px;color:var(--ink4)}
+.mnotif-time{font-size:10px;color:var(--ink5);margin-left:auto;flex-shrink:0}
+
+/* ── DESKTOP PANELS ── */
+.dsidebar{width:200px;background:var(--ink);display:flex;flex-direction:column;flex-shrink:0;min-height:560px}
+.dsbrand{padding:16px 14px 12px;border-bottom:1px solid rgba(255,255,255,.08)}
+.dslogo{font-family:var(--font-d);font-size:16px;font-weight:700;color:var(--teal-lt)}
+.dstag{font-size:9px;color:var(--ink4);letter-spacing:.1em;text-transform:uppercase;margin-top:1px}
+.dssec{padding:12px 12px 3px;font-size:9px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.1em}
+.dsitem{display:flex;align-items:center;gap:8px;padding:7px 12px;font-size:11.5px;color:rgba(255,255,255,.5);cursor:pointer;border-radius:var(--r-sm);margin:1px 6px;transition:all .14s}
+.dsitem:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8)}
+.dsitem.on{background:rgba(20,189,188,.12);color:var(--teal-lt);font-weight:600}
+.dsbadge{margin-left:auto;background:var(--amber);color:#fff;font-size:8.5px;font-weight:700;padding:1px 5px;border-radius:var(--r-pill)}
+.dsmain{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--cream)}
+.dstopbar{display:flex;align-items:center;justify-content:space-between;padding:0 18px;height:52px;background:var(--white);border-bottom:1px solid var(--bdr);gap:10px;flex-shrink:0}
+.dttitle{font-family:var(--font-d);font-size:15px;font-weight:700;color:var(--ink)}
+.dtsub{font-size:10.5px;color:var(--ink4);margin-top:1px}
+.dcontent{padding:16px 18px;flex:1;overflow:hidden}
+.dgrid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.dgrid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+.gap{margin-bottom:12px}
+.dtbl{background:var(--white);border:1px solid var(--bdr);border-radius:var(--r-lg);overflow:hidden}
+.dtbl-hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--bdr);gap:8px}
+.dtbl-title{font-size:12px;font-weight:700;color:var(--ink)}
+.earn-card{background:var(--teal);border-radius:var(--r-lg);padding:16px;color:#fff}
+.earn-val{font-family:var(--font-d);font-size:28px;font-weight:700;color:#fff}
+.earn-sub{font-size:10.5px;color:rgba(255,255,255,.65);margin-top:3px}
+.earn-label{font-size:10px;color:rgba(255,255,255,.55);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.earn-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.15);border-radius:10px;margin-top:12px;overflow:hidden}
+.earn-cell{padding:9px 12px;background:rgba(255,255,255,.08)}
+.eclbl{font-size:9.5px;color:rgba(255,255,255,.5)}
+.ecval{font-size:14px;font-weight:600;color:#fff;margin-top:1px}
+.cal-strip{display:flex;gap:4px;overflow-x:auto;padding-bottom:2px}
+.cal-day{flex-shrink:0;width:34px;text-align:center;cursor:pointer}
+.cal-wd{font-size:8.5px;color:var(--ink4);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.cal-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--ink2);margin:0 auto;transition:all .14s;cursor:pointer}
+.cal-num:hover{background:var(--teal-bg);color:var(--teal)}
+.cal-num.on{background:var(--teal);color:#fff}
+.cal-num.bk{background:var(--amber-lt);color:var(--amber-dk)}
+.cal-num.part{background:var(--teal-bg);color:var(--teal)}
+.barchart{display:flex;align-items:flex-end;gap:4px;height:60px}
+.bcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
+.bfill{width:100%;border-radius:3px 3px 0 0;background:var(--teal-bg);min-height:2px;cursor:pointer;transition:background .12s}
+.bfill:hover,.bfill.hi{background:var(--teal)}
+.blbl{font-size:8.5px;color:var(--ink5)}
+.dsearch{display:flex;align-items:center;gap:7px;background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r-md);padding:6px 10px}
+.dsearch input{border:none;background:transparent;outline:none;font-size:12px;color:var(--ink);font-family:var(--font-b);width:100%}
+.dsearch input::placeholder{color:var(--ink4)}
+.room-card{background:var(--white);border:1px solid var(--bdr);border-radius:var(--r-lg);padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.room-icon{width:48px;height:48px;border-radius:var(--r-md);background:var(--teal-bg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.review-item{padding:10px 0;border-bottom:1px solid var(--bdr)}
+.review-item:last-child{border-bottom:none}
+.review-text{font-size:11.5px;color:var(--ink2);line-height:1.5;margin-top:4px}
+.notif-bar{background:var(--amber-lt);border:1px solid rgba(232,135,74,.3);border-radius:var(--r-md);padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:12px;color:var(--amber-dk);font-weight:500}
+.stat-grid{display:grid;gap:10px;margin-bottom:14px}
+.sg4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.sg3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.sg2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.prog-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.prog-lbl{font-size:11px;color:var(--ink2);width:110px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prog-track{flex:1;height:5px;background:var(--teal-bg);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;background:var(--teal)}
+.prog-val{font-size:10.5px;color:var(--ink3);min-width:55px;text-align:right;font-family:var(--font-m)}
+.drow{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr);font-size:12px}
+.drow:last-child{border-bottom:none}
+.dlbl{color:var(--ink3)}
+.dval{font-weight:600;color:var(--ink)}
+.alert{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:var(--r-md);font-size:11.5px;margin-bottom:10px}
+.alt{background:var(--amber-lt);color:var(--amber-dk);border:1px solid rgba(232,135,74,.25)}
+.atl{background:var(--teal-bg);color:var(--teal-dk);border:1px solid rgba(13,115,119,.2)}
+.agl{background:#E8F8EE;color:#1A6B3A;border:1px solid rgba(42,157,92,.2)}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fg3{grid-template-columns:1fr 1fr 1fr}
+.fgf{grid-column:1/-1}
+.fsec{font-size:9px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.1em;padding-bottom:7px;border-bottom:1px solid var(--bdr);grid-column:1/-1;margin-top:4px}
+.dstabs{display:flex;border-bottom:1px solid var(--bdr);margin-bottom:14px}
+.dstab{padding:9px 14px;font-size:12px;font-weight:500;color:var(--ink4);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .14s}
+.dstab:hover{color:var(--ink2)}
+.dstab.on{color:var(--teal);border-bottom-color:var(--teal)}
+.mapbox{height:140px;background:linear-gradient(135deg,#C8E2E2,#A8D0D0);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;font-size:30px;margin-bottom:12px;border:1px solid var(--bdr)}
+.dhost-layout{display:flex;height:560px}
+.dsettings-nav{width:160px;flex-shrink:0;padding:12px 8px;border-right:1px solid var(--bdr);background:var(--surf)}
+.dsn-group{font-size:9px;font-weight:700;color:var(--ink4);text-transform:uppercase;letter-spacing:.09em;padding:10px 8px 4px}
+.dsn-item{padding:6px 10px;border-radius:var(--r-sm);font-size:11.5px;color:var(--ink2);cursor:pointer;margin-bottom:1px;transition:background .12s}
+.dsn-item:hover{background:var(--teal-bg);color:var(--teal-dk)}
+.dsn-item.on{background:var(--teal-bg);color:var(--teal-dk);font-weight:600}
+.dsettings-body{flex:1;padding:16px;overflow-y:auto}
+.av{border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.av-sm{width:28px;height:28px;font-size:10px}
+.av-md{width:36px;height:36px;font-size:13px}
+.av-lg{width:46px;height:46px;font-size:17px}
+.av-teal{background:var(--teal-bg);color:var(--teal-dk)}
+.av-amber{background:var(--amber-lt);color:var(--amber-dk)}
+.av-gold{background:var(--gold-lt);color:#8A6500}
+.av-purple{background:#F0EEFF;color:#4A3AAA}
+</style>
+</head>
+<body>
+
+<!-- ══════════ TOP NAVIGATION ══════════ -->
+<div class="topnav">
+  <div class="tn-logo">PearlWay</div>
+  <div class="tn-group">
+    <div class="tn-label">Tourist App</div>
+    <button class="tn-btn on" onclick="show('m-home')">Explore</button>
+    <button class="tn-btn" onclick="show('m-detail')">Stay detail</button>
+    <button class="tn-btn" onclick="show('m-vehicles')">Vehicles</button>
+    <button class="tn-btn" onclick="show('m-places')">Places</button>
+    <button class="tn-btn" onclick="show('m-experiences')">Experiences</button>
+    <button class="tn-btn" onclick="show('m-search')">Search</button>
+    <button class="tn-btn" onclick="show('m-bookings')">My trips</button>
+    <button class="tn-btn" onclick="show('m-profile')">Profile</button>
+    <button class="tn-btn" onclick="show('m-map')">Map view</button>
+    <button class="tn-btn" onclick="show('m-checkout')">Checkout</button>
+    <button class="tn-btn" onclick="show('m-notifs')">Notifications</button>
+  </div>
+  <div class="tn-group">
+    <div class="tn-label">Host Dashboard</div>
+    <button class="tn-btn" onclick="show('h-overview')">Overview</button>
+    <button class="tn-btn" onclick="show('h-bookings')">Bookings<span class="tn-badge">4</span></button>
+    <button class="tn-btn" onclick="show('h-calendar')">Calendar</button>
+    <button class="tn-btn" onclick="show('h-rooms')">Rooms</button>
+    <button class="tn-btn" onclick="show('h-guests')">Guests</button>
+    <button class="tn-btn" onclick="show('h-earnings')">Earnings</button>
+    <button class="tn-btn" onclick="show('h-reviews')">Reviews</button>
+    <button class="tn-btn" onclick="show('h-listings')">My listings</button>
+    <button class="tn-btn" onclick="show('h-settings')">Settings</button>
+    <button class="tn-btn" onclick="show('h-vehicles')">Vehicle mgmt</button>
+  </div>
+</div>
+
+<!-- ══════════ CANVAS ══════════ -->
+<div class="canvas" id="canvas">
+
+<!-- ─────────── MOBILE: HOME / EXPLORE ─────────── -->
+<div class="screen-wrap" id="m-home">
+  <div class="mframe"><div class="mscreen">
+    <div class="mhdr">
+      <div class="mhero">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div><div class="mlogo">PearlWay</div><div class="msub">Good morning, Emma 👋</div></div>
+          <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:14px">🔔</div>
+        </div>
+        <div class="msearch"><span>🔍</span><span>Where in Sri Lanka?</span></div>
+      </div>
+    </div>
+    <div class="mbody">
+      <div class="msec">Browse by type</div>
+      <div style="display:flex;gap:8px;overflow-x:auto;padding:0 14px 10px">
+        <div class="mcat on"><div class="mcicon">🏡</div><div class="mclbl">Stays</div></div>
+        <div class="mcat"><div class="mcicon">🚗</div><div class="mclbl">Vehicles</div></div>
+        <div class="mcat"><div class="mcicon">🗺</div><div class="mclbl">Places</div></div>
+        <div class="mcat"><div class="mcicon">🎭</div><div class="mclbl">Experiences</div></div>
+        <div class="mcat"><div class="mcicon">🧭</div><div class="mclbl">Guides</div></div>
+      </div>
+      <div style="display:flex;gap:6px;overflow-x:auto;padding:0 14px 10px">
+        <div class="mpill on">All</div><div class="mpill">Ella</div><div class="mpill">Mirissa</div><div class="mpill">Kandy</div><div class="mpill">Colombo</div>
+      </div>
+      <div class="mpad">
+        <div class="mcard">
+          <div class="mcimg">🌿<span class="msticker">Top rated</span></div>
+          <div class="mcbody">
+            <div class="mcname">Ella Rock Villa</div>
+            <div class="mcloc">📍 Ella, Badulla</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="mcprice">LKR 8,500<span style="font-size:9px;font-family:var(--font-b);color:var(--ink4);font-weight:400">/night</span></div>
+              <div class="mcrating">⭐ 4.9 <span style="color:var(--ink5)">(124)</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="mcard">
+          <div class="mcimg">🌊<span class="msticker teal">New</span></div>
+          <div class="mcbody">
+            <div class="mcname">Mirissa Beach Cottage</div>
+            <div class="mcloc">📍 Mirissa, Matara</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="mcprice">LKR 6,200<span style="font-size:9px;font-family:var(--font-b);color:var(--ink4);font-weight:400">/night</span></div>
+              <div class="mcrating">⭐ 4.7 <span style="color:var(--ink5)">(89)</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mfooter">
+      <div class="mnav">
+        <div class="mnav-item on"><div class="mnav-icon">🏠</div>Explore</div>
+        <div class="mnav-item"><div class="mnav-icon">🗺</div>Places</div>
+        <div class="mnav-item"><div class="mnav-icon">📋</div>Trips</div>
+        <div class="mnav-item"><div class="mnav-icon">💬</div>Messages</div>
+        <div class="mnav-item"><div class="mnav-icon">👤</div>Profile</div>
+      </div>
+    </div>
+  </div></div>
+  <div class="screen-label">Home / Explore</div>
+</div>
+
+<!-- ─────────── MOBILE: STAY DETAIL ─────────── -->
+<div class="screen-wrap" id="m-detail" style="display:none">
+  <div class="mframe"><div class="mscreen">
+    <div class="mhdr">
+      <div class="mdetailhdr">
+        <div class="mback">←</div>
+        <div class="mdetimg">🌿</div>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div><div class="mdetname">Ella Rock Villa</div><div class="mdetloc">📍 Ella, Badulla District</div></div>
+          <div style="font-size:11px;color:rgba(255,255,255,.9);font-weight:700">⭐ 4.9</div>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+          <span class="mchip">3 Beds</span><span class="mchip">Sleeps 6</span><span class="mchip">Pool</span><span class="mchip">WiFi</span>
+        </div>
+      </div>
+    </div>
+    <div class="mbody">
+      <div class="mpad" style="padding-top:12px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div class="av av-md av-teal">SK</div>
+          <div><div style="font-size:12px;font-weight:700;color:var(--ink)">Sunil Karunaratne</div><div style="font-size:10px;color:var(--ink4)">Host since 2022 · SLTDA Verified ✓</div></div>
+        </div>
+        <div style="font-size:11.5px;color:var(--ink3);line-height:1.6;margin-bottom:12px">Perched above Little Adam's Peak with panoramic valley views. Wake up to misty mountains and birdsong.</div>
+        <div style="font-size:10px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Amenities</div>
+        <div class="mamenity"><span class="maicon">📶</span>Free WiFi (50 Mbps)</div>
+        <div class="mamenity"><span class="maicon">🏊</span>Private pool</div>
+        <div class="mamenity"><span class="maicon">🍳</span>Full kitchen</div>
+        <div class="mamenity"><span class="maicon">🚗</span>Free parking</div>
+        <div style="margin-top:10px"><div class="mmap">📍</div></div>
+        <div style="margin-top:10px;font-size:10px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Select dates</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div><div class="flbl" style="font-size:10px">Check-in</div><div class="mform-input" style="display:flex;align-items:center">Apr 22, 2026</div></div>
+          <div><div class="flbl" style="font-size:10px">Check-out</div><div class="mform-input" style="display:flex;align-items:center">Apr 25, 2026</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="mbookbar mfooter">
+      <div><div class="mbookprice">LKR 8,500<span style="font-size:9px;font-family:var(--font-b);color:var(--ink4);font-weight:400"> /night</span></div><div class="mpriceSub">3 nights = LKR 25,500</div></div>
+      <button class="mbtn">Book now</button>
+    </div>
+  </div></div>
+  <div class="screen-label">Stay detail</div>
+</div>
+
+<!-- ─────────── MOBILE: VEHICLES ─────────── -->
+<div class="screen-wrap" id="m-vehicles" style="display:none">
+  <div class="mframe"><div class="mscreen">
+    <div class="mhdr">
+      <div class="mhero" style="padding-bottom:14px">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <div class="mback" style="position:relative;top:auto;left:auto">←</div>
+          <div class="mlogo" style="font-size:15px">Rent a vehicle</div>
+        </div>
+        <div class="msearch"><span>🔍</span><span>Search in Ella...</span></div>
+      </div>
+    </div>
+    <div class="mbody">
+      <div style="display:flex;gap:8px;overflow-x:auto;padding:10px 14px">
+        <div class="mpill on">All</div><div class="mpill">🚗 Car</div><div class="mpill">🛺 Tuk-tuk</div><div class="mpill">🏍 Bike</div><div class="mpill">🚐 Van</div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0 14px 8px">
+        <div style="font-size:10px;color:var(--ink4)">12 vehicles available</div>
+        <div style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--teal);font-weight:600;cursor:pointer">⚙ Filters</div>
+      </div>
+      <div class="mpad">
+        <div class="mveh"><div class="mvicon">🚗</div><div><div class="mvname">Toyota Axio 2020</div><div class="mvsub">5 seats · A/C · Insured</div><div style="margin-top:3px"><span class="badge b-teal" style="font-size:9px">SLTDA Reg.</span></div></div><div class="mvprice">LKR 6,500<div style="font-size:9px;font-weight:400;color:var(--ink4);font-family:var(--font-b)">/day</div></div></div>
+        <div class="mveh"><div class="mvicon">🛺</div><div><div class="mvname">Tuk-tuk — Nimal</div><div class="mvsub">3 seats · Local driver</div><div style="margin-top:3px"><span class="badge b-green" style="font-size:9px">Verified</span></div></div><div class="mvprice">LKR 2,200<div style="font-size:9px;font-weight:400;color:var(--ink4);font-family:var(--font-b)">/day</div></div></div>
+        <div class="mveh"><div class="mvicon">🏍</div><div><div class="mvname">Honda CB 125cc</div><div class="mvsub">1–2 riders · Helmet incl.</div><div style="margin-top:3px"><span class="badge b-amber" style="font-size:9px">2 left</span></div></div><div class="mvprice">LKR 1,800<div style="font-size:9px;font-weight:400;color:var(--ink4);font-family:var(--font-b)">/day</div></div></div>
+        <div class="mveh"><div class="mvicon">🚐</div><div><div class="mvname">KDH Van — 14 seats</div><div class="mvsub">Groups · A/C · Driver incl.</div><div style="margin-top:3px"><span class="badge b-teal" style="font-size:9px">Verified</span></div></div><div class="mvprice">LKR 12,000<div style="font-size:9px;font-weight:400;color:var(--ink4);font-family:var(--font-b)">/day</div></div></div>
+        <div class="mveh" style="border-bottom:none"><div class="mvicon">🚲</div><div><div class="mvname">Mountain bike</div><div class="mvsub">1 rider · Helmet incl.</div><div style="margin-top:3px"><span class="badge b-teal" style="font-size:9px">Available</span></div></div><div class="mvprice">LKR 800<div style="font-size:9px;font-weight:400;color:var(--ink4);font-family:var(--font-b)">/day</div></div></div>
+      </div>
+    </div>
+    <div class="mfooter"><div class="mnav">
+      <div class="mnav-item"><div class="mnav-icon">🏠</div>Explore</div>
+      <div class="mnav-item"><div class="mnav-icon">🗺</div>Places</div>
+      <div class="mnav-item on"><div class="mnav-icon">🚗</div>Vehicles</div>
+      <div class="mnav-item"><div class="mnav-icon">💬</div>Messages</div>
+      <div class="mnav-item"><div class="mnav-icon">👤</div>Profile</div>
+    </div></div>
+  </div></div>
+  <div class="screen-label">Vehicle rentals</div>
+</div>
+
+<!-- ─────────── MOBILE: PLACES ─────────── -->
+<div class="screen-wrap" id="m-places" style="display:none">
+  <div class="mframe"><div class="mscreen">
+    <div class="mhdr">
+      <div class="mhero" style="padding-bottom:14px">
+        <div class="mlogo" style="font-size:15px">Tourist places</div>
+        <div class="msub">Ella area · 28 spots</div>
+        <div class="msearch" style="margin-top:12px"><span>🔍</span><span>Search tourist spots...</span></div>
+      </div>
+    </div>
+    <div class="mbody">
+      <div style="display:flex;gap:8px;overflow-x:auto;padding:10px 14px">
+        <div class="mpill on">All</div><div class="mpill">🏔 Nature</div><div class="mpill">🏛 Culture</div><div class="mpill">🍽 Food</div><div class="mpill">🎭 Activities</div>
+      </div>
+      <div class="mpad">
+        <div class="mspot"><div class="msimg">🏔</div><div><div class="msname">Ella Rock</div><div class="msdist">📍 1.8 km · 3h hike</div><div class="msentry">Free entry · Open daily</div></div><div style="margin-left:auto;font-size:11px;color:var(--gold);font-weight:700">⭐ 4.9</div></div>
+        <div class="mspot"><div class="msimg">🌉</div><div><div class="msname">Nine Arches Bridge</div><div class="msdist">📍 2.4 km · 10 min</div><div class="msentry">Free entry · Best 6–8 AM</div></div><div style="margin-left:auto;font-size:11px;color:var(--gold);font-weight:700">⭐ 4.8</div></div>
+        <div class="mspot"><div class="msimg">🍃</div><div><div class="msname">Tea Factory Tour</div><div class="msdist">📍 5.1 km · 1.5h guided</div><div class="msentry">LKR 500/person · Book ahead</div></div><div style="margin-left:auto;font-size:11px;color:var(--gold);font-weight:700">⭐ 4.6</div></div>
+        <div class="mspot"><div class="msimg">🌊</div><div><div class="msname">Ravana Falls</div><div class="msdist">📍 7.2 km · 15 min drive</div><div class="msentry">LKR 250 · Open 6AM–6PM</div></div><div style="margin-left:auto;font-size:11px;color:var(--gold);font-weight:700">⭐ 4.7</div></div>
+        <div class="mspot"><div class="msimg">🐘</div><div><div class="msname">Udawalawe Safari</div><div class="msdist">📍 62 km · Full day</div><div class="msentry">LKR 4,500 · Book ahead</div></div><div style="margin-left:auto;font-size:11px;color:var(--gold);font-weight:700">⭐ 4.9</div></div>
+        <div class="mspot" style="border-bottom:none"><div class="msimg">🏯</div><div><div class="msname">Sigiriya Rock Fortress</div><div class="msdist">📍yday trip · UNESCO site</div><div class="msentry">USD 30 foreigners · Book ahead</div></div><div style="margin-left:auto;font-size:11px;color:var(--gold);font-weight:700">⭐ 4.9</div></div>
+      </div>
+    </div>
+    <div class="mfooter"><div class="mnav">
+      <div class="mnav-item"><div class="mnav-icon">🏠</div>Explore</div>
+      <div class="mnav-item on"><div class="mnav-icon">🗺</div>Places</div>
+      <div class="mnav-item"><div class="mnav-icon">🚗</div>Vehicles</div>
+      <div class="mnav-item"><div class="mnav-icon">💬</div>Messages</div>
+      <div class="mnav-item"><div class="mnav-icon">👤</div>Profile</div>
+    </div></div>
+  </div></div>
+  <div class="screen-label">Tourist places</div>
+</div>
+
+<!-- ─────────── MOBILE: EXPERIENCES ─────────── -->
+<div class="screen-wrap" id="m-experiences" style="display:none">
+  <div class="mframe"><div class="mscreen">
+    <div class="mhdr">
+      <div class="mhero" style="padding-bottom:14px">
+        <div class="mlogo" style="font-size:15px">Experiences</div>
+        <div class="msub">Guided activities & tours</div>
+        <div class="msearch" style="margin-top:12px"><span>🔍</span><span>Find experiences...</span></div>
+      </div>
+    </div>
+    <div class="mbody">
+      <div style="display:flex;gap:8px;overflow-x:auto;padding:10px 14px">
+        <div class="mpill on">All</div><div class="mpill">🌊 Ocean</div><div class="mpill">🏔 Hiking</div><div class="mpill">🍛 Food</div><div class="mpill">🎨 Culture</div>
+      </div>
+      <div class="mpad">
+        <div class="mcard">
+          <div class="mcimg" style="height:85px">🐋<span class="msticker">Popular</span></div>
+          <div class="mcbody">
+            <div class="mcname">Whale watching — Mirissa</div>
+            <div class="mcloc">📍 Mirissa · 4 hours</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="mcprice">LKR 4,500<span style="font-size:9px;font-family:var(--font-b);color:var(--ink4);font-weight:400">/person</span></div>
+              <div class="mcrating">⭐ 4.8 · 8 AM daily</div>
+            </div>
+          </div>
+        </div>
+        <div class="mcard">
+          <div class="mcimg" style="height:85px">🍛</div>
+          <div class="mcbody">
+            <div class="mcname">Sri Lankan cooking class</div>
+            <div class="mcloc">📍 Kandy · 3 hours</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="mcprice">LKR 3,200<span style="font-size:9px;font-family:var(--font-b);color:var(--ink4);font-weight:400">/person</span></div>
+              <div class="mcrating">⭐ 4.9 · Max 6 pax</div>
+            </div>
+          </div>
+        </div>
+        <div class="mcard">
+          <div class="mcimg" style="height:85px">🎋</div>
+          <div class="mcbody">
+            <div class="mcname">Rainforest trek — Sinharaja</div>
+            <div class="mcloc">📍 Sinharaja · Full day</div>
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div class="mcprice">LKR 5,800<span style="font-size:9px;font-family:var(--font-b);color:var(--ink4);font-weight:400">/person</span></div>
+              <div class="mcrating">⭐ 4.7 · Guide incl.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mfooter"><div class="mnav">
+      <div class="mnav-item"><div class="mnav-icon">🏠</div>Explore</div>
+      <div class="mnav-item"><div class="mnav-icon">🗺</div>Places</div>
+      <div class="mnav-item on"><div class="mnav-icon">🎭</div>Exp.</div>
+      <div class="mnav-item"><div class="mnav-icon">💬</div>Messages</div>
+      <div class="mnav-item"><div class="mnav-icon">👤</div>Profile</div>
+    </div></div>
+  </div></div>
+  <div class="screen-label">Experiences</div>
+</div>
+
+<!-- ─────────── MOBILE: SEARCH RESULTS ─────────── -->
+<div class="screen-wrap" id="m-search" style="display:none">
+  <div class="mframe"><div class="mscreen">
+    <div class="mhdr">
+      <div class="mtopbar white" style="flex-direction:column;align-items:stretch;gap:8px;padding-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="font-size:16px;cursor:pointer;color:var(--ink3)">←</div>
+          <div style="flex:1;background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:8px"><span style="color:var(--ink4)">🔍</span><span style="font-size:11.5px;color:var(--ink)">Ella, Sri Lanka</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:10.5px;color:var(--ink2)">📅 Apr 22–25</div>
+          <div style="background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:6px 10px;font-size:10.5px;color:var(--ink2)">👤 2 guests</div>
+        </div>
+        <div style="display:flex;gap:5px;overflow-x:auto">
+          <div class="mpill on" style="font-size:10px">🏡 Stays</div><div class="mpill" style="font-size:10px">🚗 Vehicles</div><div class="mpill" style="font-size:10px">🗺 Places</div>
+        </div>
+      </div>
+    </div>
+    <div class="mbody" style="padding:10px 14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="font-size:10.5px;color:var(--ink4)">14 stays in Ella</div><div style="font-size:10.5px;color:var(--teal);font-weight:600;cursor:pointer">⚙ Filter</div></div>
+      <div class="mcard"><div class="mcimg" style="height:80px">🌿<span class="msticker">Best match</span></div><div class="mcbody"><div class="mcname">Ella Rock Villa</div><div class="mcloc">📍 Ella · 3 beds</div><div style="display:flex;justify-content:space-between"><div class="mcprice">LKR 8,500<span style="font-size:9px;font-family:var(--font-b);color:var(--ink4)">/night</span></div><div class="mcrating">⭐ 4.9</div></div></div></div>
+      <div class="mcard"><div class="mcimg" style="height:80px">☕</div><div class="mcbody"><div class="mcname">Tea Garden Guesthouse</div><div class="mcloc">📍 Ella · 2 beds</div><div style="display:flex;justify-content:space-between"><div class="mcprice">LKR 4,800<span style="font-size:9px;font-family:var(--font-b);color:var(--ink4)">/night</span></div><div class="mcrating">⭐ 4.5</div></div></div></div>
+      <div class="mcard"><div class="mcimg" style="height:80px">🏡</div><div class="mcbody"><div class="mcname">Mountain View Homestay</div><div class="mcloc">📍 Ella · 1 bed</div><div style="display:flex;justify-content:space-between"><div class="mcprice">LKR 3,200<span style="font-size:9px;font-family:var(--font-b);color:var(--ink4)">/night</span></div><div class="mcrating">⭐ 4.3</div></div></div></div>
+    </div>
+    <div class="mfooter"><div class="mnav">
+      <div class="mnav-item"><div class="mnav-icon">🏠</div>Explore</div><div class="mnav-item"><div class="mnav-icon">🗺</div>Places</div><div class="mnav-item"><div class="mnav-icon">📋</div>Trips</div><div class="mnav-item"><div class="mnav-icon">💬</div>Messages</div><div class="mnav-item"><div class="mnav-icon">👤</div>Profile</div>
+    </div></div>
+  </div></div>
+  <div class="screen-label">Search results</div>
+</div>
+
+<!-- ─────────── MOBILE: CHECKOUT ─────────── -->
+<div class="screen-wrap" id="m-checkout" style="display:none">
+  <div class="mframe"><div class="mscreen">
+    <div class="mhdr">
+      <div class="mtopbar white" style="justify-content:flex-start;gap:12px">
+        <div style="font-size:16px;cursor:pointer;color:var(--ink3)">←</div>
+        <div style="font-family:var(--font-d);font-size:14px;font-weight:700;color:var(--ink)">Confirm booking</div>
+      </div>
+    </div>
+    <div class="mbody" style="padding:12px 14px">
+      <div style="background:var(--teal-bg);border-radius:12px;padding:12px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
+        <div style="font-size:28px">🌿</div>
+        <div><div style="font-size:12.5px;font-weight:700;color:var(--ink)">Ella Rock Villa</div><div style="font-size:10.5px;color:var(--ink4)">Apr 22–25 · 3 nights · 2 guests</div></div>
+      </div>
+      <div style="font-size:10px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Your details</div>
+      <div class="fgrp" style="margin-bottom:8px"><div class="flbl" style="font-size:10.5px">Full name</div><div class="mform-input">Emma Wilson</div></div>
+      <div class="fgrp" style="margin-bottom:8px"><div class="flbl" style="font-size:10.5px">Email</div><div class="mform-input">emma@email.com</div></div>
+      <div class="fgrp" style="margin-bottom:12px"><div class="flbl" style="font-size:10.5px">Phone (WhatsApp)</div><div class="mform-input">+44 7700 000000</div></div>
+      <div style="font-size:10px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Price summary</div>
+      <div class="drow" style="font-size:11.5px"><span class="dlbl">LKR 8,500 × 3 nights</span><span class="dval">LKR 25,500</span></div>
+      <div class="drow" style="font-size:11.5px"><span class="dlbl">PearlWay service fee (8%)</span><span class="dval">LKR 2,040</span></div>
+      <div class="drow" style="font-size:11.5px;font-weight:700"><span class="dlbl">Total</span><span class="dval" style="color:var(--teal)">LKR 27,540</span></div>
+      <div style="margin-top:10px;font-size:10px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Pay with</div>
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        <div style="flex:1;border:2px solid var(--teal);border-radius:10px;padding:8px;text-align:center;font-size:11px;font-weight:600;color:var(--teal);cursor:pointer">💳 Card</div>
+        <div style="flex:1;border:1px solid var(--bdr);border-radius:10px;padding:8px;text-align:center;font-size:11px;color:var(--ink3);cursor:pointer">📱 PayHere</div>
+        <div style="flex:1;border:1px solid var(--bdr);border-radius:10px;padding:8px;text-align:center;font-size:11px;color:var(--ink3);cursor:pointer">🏦 Bank</div>
+      </div>
+    </div>
+    <div class="mbookbar mfooter">
+      <div><div class="mbookprice">LKR 27,540</div><div class="mpriceSub">Total incl. fees</div></div>
+      <button class="mbtn">Confirm & pay</button>
+    </div>
+  </div></div>
+  <div class="screen-label">Checkout</div>
+</div>
+
+<!-- ─────────── MOBILE: MY BOOKINGS ─────────── -->
+<div class="screen-wrap" id="m-bookings" style="display:none">
+  <div class="mframe"><div class="mscreen">
+    <div class="mhdr">
+      <div class="mtopbar white" style="justify-content:space-between">
+        <div style="font-family:var(--font-d);font-size:15px;font-weight:700;color:var(--ink)">My trips</div>
+        <div style="font-size:10.5px;color:var(--ink4)">2 upcoming · 5 done</div>
+      </div>
+    </div>
+    <div class="mbody" style="padding:10px 14px">
+      <div style="display:flex;gap:6px;margin-bottom:12px">
+        <div class="mpill on" style="font-size:10.5px">📅 Upcoming</div><div class="mpill" style="font-size:10.5px">✅ Past</div><div class="mpill" style="font-size:10.5px">❌ Cancelled</div>
+      </div>
+      <div class="mbkcard">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div style="display:flex;align-items:center;gap:8px"><div style="font-size:22px">🌿</div><div><div class="mbkname">Ella Rock Villa</div><div class="mbkdate">Apr 22–25 · 3 nights</div></div></div>
+          <span class="badge b-green" style="font-size:9.5px">CONFIRMED</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:11.5px;color:var(--ink3)">Total: <strong style="color:var(--ink)">LKR 27,540</strong></div><button class="mbtn" style="padding:6px 12px;font-size:10.5px">View details</button></div>
+      </div>
+      <div class="mbkcard">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div style="display:flex;align-items:center;gap:8px"><div style="font-size:22px">🛺</div><div><div class="mbkname">Tuk-tuk — Nimal</div><div class="mbkdate">Apr 23 · Full day</div></div></div>
+          <span class="badge b-amber" style="font-size:9.5px">PENDING</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:11.5px;color:var(--ink3)">Total: <strong style="color:var(--ink)">LKR 2,200</strong></div><button class="mbtn" style="padding:6px 12px;font-size:10.5px;background:transparent;color:var(--teal);border:1px solid var(--teal)">Manage</button></div>
+      </div>
+      <div class="mbkcard" style="opacity:.6">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+          <div style="display:flex;align-items:center;gap:8px"><div style="font-size:22px">🐋</div><div><div class="mbkname">Whale watching tour</div><div class="mbkdate">Apr 24 · 8:00 AM</div></div></div>
+          <span class="badge b-teal" style="font-size:9.5px">BOOKED</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><div style="font-size:11.5px;color:var(--ink3)">Total: <strong style="color:var(--ink)">LKR 4,500</strong></div><button class="mbtn" style="padding:6px 12px;font-size:10.5px">Details</button></div>
+      </div>
+    </div>
+    <div class="mfooter"><div class="mnav">
+      <div class="mnav-item"><div class="mnav-icon">🏠</div>Explore</div><div class="mnav-item"><div class="mnav-icon">🗺</div>Places</div><div class="mnav-item on"><div class="mnav-icon">📋</div>Trips</div><div class="mnav-item"><div class="mnav-icon">💬</div>Messages</div><div class="mnav-item"><div class="mnav-icon">👤</div>Profile</div>
+    </div></div>
+  </div></div>
+  <div class="screen-label">My bookings</div>
+</div>
+
+<!-- ─────────── MOBILE: PROFILE ─────────── -->
+<div class="screen-wrap" id="m-profile" style="display:none">
+  <div class="mframe"><div class="mscreen">
+    <div class="mhdr">
+      <div style="background:var(--teal);padding:44px 14px 20px;text-align:center">
+        <div style="width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 8px">👩</div>
+        <div style="font-family:var(--font-d);font-size:17px;font-weight:700;color:#fff">Emma Wilson</div>
+        <div style="font-size:10.5px;color:rgba(255,255,255,.7)">Joined January 2026 · 7 trips</div>
+      </div>
+    </div>
+    <div class="mbody" style="padding:12px 14px">
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <div style="flex:1;background:var(--teal-bg);border-radius:10px;padding:10px;text-align:center"><div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--teal)">7</div><div style="font-size:9.5px;color:var(--ink4)">Trips</div></div>
+        <div style="flex:1;background:var(--amber-lt);border-radius:10px;padding:10px;text-align:center"><div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--amber-dk)">3</div><div style="font-size:9.5px;color:var(--ink4)">Reviews</div></div>
+        <div style="flex:1;background:var(--gold-lt);border-radius:10px;padding:10px;text-align:center"><div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:#8A6500">240</div><div style="font-size:9.5px;color:var(--ink4)">Go points</div></div>
+      </div>
+      <div style="font-size:10px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Account</div>
+      <div class="drow" style="font-size:11.5px"><span style="display:flex;align-items:center;gap:7px"><span>✏️</span>Edit profile</span><span style="color:var(--ink4)">›</span></div>
+      <div class="drow" style="font-size:11.5px"><span style="display:flex;align-items:center;gap:7px"><span>🔔</span>Notifications</span><span style="color:var(--ink4)">›</span></div>
+      <div class="drow" style="font-size:11.5px"><span style="display:flex;align-items:center;gap:7px"><span>💳</span>Payment methods</span><span style="color:var(--ink4)">›</span></div>
+      <div class="drow" style="font-size:11.5px"><span style="display:flex;align-items:center;gap:7px"><span>🌐</span>Language: English</span><span style="color:var(--ink4)">›</span></div>
+      <div class="drow" style="font-size:11.5px"><span style="display:flex;align-items:center;gap:7px"><span>💰</span>Currency: LKR</span><span style="color:var(--ink4)">›</span></div>
+      <div style="margin-top:14px"><div style="font-size:10px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px">Become a host</div><div style="background:var(--teal-bg);border-radius:12px;padding:12px;font-size:11.5px;color:var(--teal-dk)">List your guesthouse, vehicle or experience on PearlWay and start earning.<br><button class="mbtn" style="margin-top:8px;padding:7px 14px;font-size:11px">Get started →</button></div></div>
+    </div>
+    <div class="mfooter"><div class="mnav">
+      <div class="mnav-item"><div class="mnav-icon">🏠</div>Explore</div><div class="mnav-item"><div class="mnav-icon">🗺</div>Places</div><div class="mnav-item"><div class="mnav-icon">📋</div>Trips</div><div class="mnav-item"><div class="mnav-icon">💬</div>Messages</div><div class="mnav-item on"><div class="mnav-icon">👤</div>Profile</div>
+    </div></div>
+  </div></div>
+  <div class="screen-label">Profile</div>
+</div>
+
+<!-- ─────────── MOBILE: MAP VIEW ─────────── -->
+<div class="screen-wrap" id="m-map" style="display:none">
+  <div class="mframe"><div class="mscreen">
+    <div style="position:relative;flex:1;background:linear-gradient(135deg,#B8D5C8,#A0C8B8,#88BBA8);display:flex;align-items:center;justify-content:center;flex-direction:column;overflow:hidden">
+      <div style="position:absolute;top:44px;left:0;right:0;padding:10px 12px;display:flex;gap:8px;z-index:5">
+        <div style="flex:1;background:rgba(255,255,255,.95);border-radius:10px;padding:8px 12px;display:flex;align-items:center;gap:6px;backdrop-filter:blur(8px)"><span style="font-size:13px">🔍</span><span style="font-size:11px;color:var(--ink3)">Search on map...</span></div>
+        <div style="background:rgba(255,255,255,.95);border-radius:10px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer">⚙</div>
+      </div>
+      <div style="font-size:60px;opacity:.15;margin-bottom:40px">🗺</div>
+      <div style="position:absolute;top:110px;left:60px;background:var(--teal);color:#fff;border-radius:var(--r-pill);padding:4px 10px;font-size:10px;font-weight:700;box-shadow:0 2px 8px rgba(13,115,119,.4);cursor:pointer">LKR 8,500</div>
+      <div style="position:absolute;top:150px;right:40px;background:var(--white);color:var(--teal);border-radius:var(--r-pill);padding:4px 10px;font-size:10px;font-weight:700;border:2px solid var(--teal);cursor:pointer">LKR 6,200</div>
+      <div style="position:absolute;top:200px;left:90px;background:var(--amber);color:#fff;border-radius:var(--r-pill);padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer">LKR 4,800</div>
+      <div style="position:absolute;bottom:0;left:0;right:0;background:var(--white);border-radius:18px 18px 0 0;padding:12px 14px;border-top:1px solid var(--bdr)">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="font-size:11px;font-weight:700;color:var(--ink)">3 stays near here</div><div style="font-size:10.5px;color:var(--teal);cursor:pointer;font-weight:600">List view</div></div>
+        <div class="mcard" style="margin:0"><div class="mcimg" style="height:60px">🌿</div><div class="mcbody"><div class="mcname" style="font-size:11.5px">Ella Rock Villa</div><div class="mcloc" style="font-size:10px">📍 0.8 km away</div><div style="display:flex;justify-content:space-between"><div class="mcprice" style="font-size:13px">LKR 8,500</div><div class="mcrating" style="font-size:10px">⭐ 4.9</div></div></div></div>
+      </div>
+    </div>
+    <div class="mfooter"><div class="mnav">
+      <div class="mnav-item"><div class="mnav-icon">🏠</div>Explore</div><div class="mnav-item on"><div class="mnav-icon">🗺</div>Map</div><div class="mnav-item"><div class="mnav-icon">📋</div>Trips</div><div class="mnav-item"><div class="mnav-icon">💬</div>Messages</div><div class="mnav-item"><div class="mnav-icon">👤</div>Profile</div>
+    </div></div>
+  </div></div>
+  <div class="screen-label">Map view</div>
+</div>
+
+<!-- ─────────── MOBILE: NOTIFICATIONS ─────────── -->
+<div class="screen-wrap" id="m-notifs" style="display:none">
+  <div class="mframe"><div class="mscreen">
+    <div class="mhdr">
+      <div class="mtopbar white" style="justify-content:space-between">
+        <div style="font-family:var(--font-d);font-size:15px;font-weight:700;color:var(--ink)">Notifications</div>
+        <div style="font-size:10.5px;color:var(--teal);font-weight:600">Mark all read</div>
+      </div>
+    </div>
+    <div class="mbody" style="padding:0 14px">
+      <div class="mnotif" style="background:var(--teal-bg);margin:0 -14px;padding:10px 14px">
+        <div class="mnotif-icon" style="background:var(--teal-bg)">✅</div>
+        <div style="flex:1"><div class="mnotif-title">Booking confirmed!</div><div class="mnotif-sub">Ella Rock Villa · Apr 22–25 · LKR 27,540</div></div>
+        <div class="mnotif-time">2m ago</div>
+      </div>
+      <div class="mnotif">
+        <div class="mnotif-icon" style="background:var(--amber-lt)">💬</div>
+        <div style="flex:1"><div class="mnotif-title">Message from Sunil</div><div class="mnotif-sub">"Welcome! I'll be at the gate to receive you..."</div></div>
+        <div class="mnotif-time">1h ago</div>
+      </div>
+      <div class="mnotif">
+        <div class="mnotif-icon" style="background:var(--teal-bg)">🛺</div>
+        <div style="flex:1"><div class="mnotif-title">Tuk-tuk request pending</div><div class="mnotif-sub">Nimal will confirm within 2 hours</div></div>
+        <div class="mnotif-time">3h ago</div>
+      </div>
+      <div class="mnotif">
+        <div class="mnotif-icon" style="background:var(--gold-lt)">⭐</div>
+        <div style="flex:1"><div class="mnotif-title">Leave a review</div><div class="mnotif-sub">How was your stay at Mirissa Beach Cottage?</div></div>
+        <div class="mnotif-time">2d ago</div>
+      </div>
+      <div class="mnotif" style="border-bottom:none">
+        <div class="mnotif-icon" style="background:#F0EEFF">🎁</div>
+        <div style="flex:1"><div class="mnotif-title">240 Go Points earned!</div><div class="mnotif-sub">Use for discounts on your next booking</div></div>
+        <div class="mnotif-time">3d ago</div>
+      </div>
+    </div>
+    <div class="mfooter"><div class="mnav">
+      <div class="mnav-item"><div class="mnav-icon">🏠</div>Explore</div><div class="mnav-item"><div class="mnav-icon">🗺</div>Places</div><div class="mnav-item"><div class="mnav-icon">📋</div>Trips</div><div class="mnav-item on"><div class="mnav-icon">🔔</div>Alerts</div><div class="mnav-item"><div class="mnav-icon">👤</div>Profile</div>
+    </div></div>
+  </div></div>
+  <div class="screen-label">Notifications</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HOST DASHBOARD — DESKTOP SCREENS
+══════════════════════════════════════════ -->
+
+<!-- ─────────── HOST: OVERVIEW ─────────── -->
+<div class="screen-wrap" id="h-overview" style="display:none">
+  <div class="dframe"><div class="dscreen" style="display:flex;height:560px">
+    <div class="dsidebar">
+      <div class="dsbrand"><div class="dslogo">PearlWay</div><div class="dstag">Host portal</div></div>
+      <div class="dssec">Main</div>
+      <div class="dsitem on">📊 Overview</div>
+      <div class="dsitem">📅 Bookings<span class="dsbadge">4</span></div>
+      <div class="dsitem">🗓 Calendar</div>
+      <div class="dssec">Property</div>
+      <div class="dsitem">🛏 Rooms & pricing</div>
+      <div class="dsitem">⭐ Reviews</div>
+      <div class="dsitem">📋 My listings</div>
+      <div class="dssec">Finance</div>
+      <div class="dsitem">💰 Earnings</div>
+      <div class="dsitem">👥 Guests</div>
+      <div class="dssec">System</div>
+      <div class="dsitem">🚗 Vehicle mgmt</div>
+      <div class="dsitem">⚙ Settings</div>
+      <div style="margin-top:auto;padding:12px 8px;border-top:1px solid rgba(255,255,255,.07)">
+        <div style="display:flex;align-items:center;gap:8px;padding:6px;border-radius:var(--r-sm);cursor:pointer">
+          <div class="av av-sm av-teal">SK</div>
+          <div><div style="font-size:11px;font-weight:600;color:rgba(255,255,255,.8)">Sunil K.</div><div style="font-size:9.5px;color:var(--ink4)">Host · Ella</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="dsmain">
+      <div class="dstopbar">
+        <div><div class="dttitle">Overview</div><div class="dtsub">Ella Rock Villa · April 2026</div></div>
+        <div style="display:flex;gap:6px">
+          <div class="dsearch" style="width:160px"><input placeholder="Search..."></div>
+          <div class="bicon">🔔</div>
+          <button class="btn primary sm"><span>+</span> Add room</button>
+        </div>
+      </div>
+      <div class="dcontent" style="overflow-y:auto">
+        <div class="notif-bar">⚠ 4 new booking requests need your response within 24 hours</div>
+        <div class="earn-card gap">
+          <div class="earn-label">April earnings</div>
+          <div class="earn-val">LKR 184,500</div>
+          <div class="earn-sub">↑ 23% vs March · 22 bookings this month</div>
+          <div class="earn-grid">
+            <div class="earn-cell"><div class="eclbl">This week</div><div class="ecval">LKR 42,000</div></div>
+            <div class="earn-cell"><div class="eclbl">Pending payout</div><div class="ecval">LKR 38,500</div></div>
+            <div class="earn-cell"><div class="eclbl">Occupancy</div><div class="ecval">78%</div></div>
+            <div class="earn-cell"><div class="eclbl">Avg stay</div><div class="ecval">2.8 nights</div></div>
+          </div>
+        </div>
+        <div class="stat-grid sg4 gap">
+          <div class="stat"><div class="slbl">Bookings (Apr)</div><div class="sval t">22</div><div class="sdelta up">↑ 6 vs Mar</div></div>
+          <div class="stat"><div class="slbl">Occupancy</div><div class="sval">78%</div><div class="sdelta up">↑ 12pp vs Mar</div></div>
+          <div class="stat"><div class="slbl">Avg rating</div><div class="sval" style="color:var(--gold)">4.9</div><div class="sdelta neu">124 reviews total</div></div>
+          <div class="stat"><div class="slbl">Pending requests</div><div class="sval a">4</div><div class="sdelta dn">Action needed</div></div>
+        </div>
+        <div class="dgrid2 gap">
+          <div class="card">
+            <div class="ctitle" style="margin-bottom:8px">Revenue — April (LKR '000)</div>
+            <div class="barchart" id="bc1"></div>
+          </div>
+          <div class="card">
+            <div class="ctitle">Top booking sources</div>
+            <div class="prog-row"><span class="prog-lbl">PearlWay direct</span><div class="prog-track"><div class="prog-fill" style="width:62%"></div></div><span class="prog-val">62%</span></div>
+            <div class="prog-row"><span class="prog-lbl">Booking.com</span><div class="prog-track"><div class="prog-fill" style="width:24%;background:var(--amber)"></div></div><span class="prog-val">24%</span></div>
+            <div class="prog-row"><span class="prog-lbl">Airbnb</span><div class="prog-track"><div class="prog-fill" style="width:10%;background:var(--gold)"></div></div><span class="prog-val">10%</span></div>
+            <div class="prog-row" style="margin-bottom:0"><span class="prog-lbl">Walk-in / WhatsApp</span><div class="prog-track"><div class="prog-fill" style="width:4%;background:var(--ink4)"></div></div><span class="prog-val">4%</span></div>
+          </div>
+        </div>
+        <div class="dtbl">
+          <div class="dtbl-hdr"><span class="dtbl-title">Recent booking requests</span><button class="btn ghost sm">View all →</button></div>
+          <table>
+            <thead><tr><th>Guest</th><th>Dates</th><th>Nights</th><th>Total</th><th>Source</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td><div class="td-n">Emma Wilson</div><div class="td-s">emma@email.com</div></td><td class="mono">Apr 22–25</td><td>3</td><td class="bold" style="color:var(--teal)">LKR 27,540</td><td><span class="badge b-teal">PearlWay</span></td><td><span class="badge b-amber">Pending</span></td><td><div style="display:flex;gap:4px"><button class="btn primary xs">Accept</button><button class="btn xs">Decline</button></div></td></tr>
+              <tr><td><div class="td-n">James Tan</div><div class="td-s">james@email.com</div></td><td class="mono">Apr 26–28</td><td>2</td><td class="bold" style="color:var(--teal)">LKR 18,360</td><td><span class="badge b-gray">Booking.com</span></td><td><span class="badge b-amber">Pending</span></td><td><div style="display:flex;gap:4px"><button class="btn primary xs">Accept</button><button class="btn xs">Decline</button></div></td></tr>
+              <tr><td><div class="td-n">Priya Sharma</div><div class="td-s">priya@email.com</div></td><td class="mono">Apr 18–21</td><td>3</td><td class="bold" style="color:var(--teal)">LKR 27,540</td><td><span class="badge b-teal">PearlWay</span></td><td><span class="badge b-green">Confirmed</span></td><td><button class="btn ghost xs">View</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="screen-label">Host — Overview</div>
+</div>
+
+<!-- ─────────── HOST: BOOKINGS ─────────── -->
+<div class="screen-wrap" id="h-bookings" style="display:none">
+  <div class="dframe"><div class="dscreen" style="display:flex;height:560px">
+    <div class="dsidebar">
+      <div class="dsbrand"><div class="dslogo">PearlWay</div><div class="dstag">Host portal</div></div>
+      <div class="dssec">Main</div>
+      <div class="dsitem">📊 Overview</div>
+      <div class="dsitem on">📅 Bookings<span class="dsbadge">4</span></div>
+      <div class="dsitem">🗓 Calendar</div>
+      <div class="dssec">Property</div>
+      <div class="dsitem">🛏 Rooms & pricing</div>
+      <div class="dsitem">⭐ Reviews</div>
+      <div class="dsitem">📋 My listings</div>
+      <div class="dssec">Finance</div>
+      <div class="dsitem">💰 Earnings</div>
+      <div class="dsitem">👥 Guests</div>
+    </div>
+    <div class="dsmain">
+      <div class="dstopbar">
+        <div><div class="dttitle">Bookings</div><div class="dtsub">22 bookings in April</div></div>
+        <div style="display:flex;gap:6px">
+          <div class="dsearch" style="width:160px"><input placeholder="Guest or ref..."></div>
+          <select class="fsel" style="width:110px;font-size:11.5px"><option>All status</option></select>
+          <button class="btn sm">Export</button>
+        </div>
+      </div>
+      <div class="dcontent">
+        <div style="display:flex;gap:6px;margin-bottom:14px">
+          <div class="mpill on" style="font-size:11px">All (22)</div>
+          <div class="mpill" style="font-size:11px">Pending (4)</div>
+          <div class="mpill" style="font-size:11px">Confirmed (15)</div>
+          <div class="mpill" style="font-size:11px">Checked in (2)</div>
+          <div class="mpill" style="font-size:11px">Completed (1)</div>
+        </div>
+        <div class="dtbl">
+          <table>
+            <thead><tr><th>Ref</th><th>Guest</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Nights</th><th>Total</th><th>Source</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">#BK-0214</td><td><div class="td-n">Emma Wilson</div><div class="td-s">2 guests</div></td><td>Suite A</td><td class="mono">Apr 22</td><td class="mono">Apr 25</td><td>3</td><td class="bold" style="color:var(--teal)">LKR 27,540</td><td><span class="badge b-teal" style="font-size:9px">PearlWay</span></td><td><span class="badge b-amber">Pending</span></td><td><div style="display:flex;gap:3px"><button class="btn primary xs">Accept</button><button class="btn xs">✕</button></div></td></tr>
+              <tr><td class="mono">#BK-0213</td><td><div class="td-n">James Tan</div><div class="td-s">2 guests</div></td><td>Room 2</td><td class="mono">Apr 26</td><td class="mono">Apr 28</td><td>2</td><td class="bold" style="color:var(--teal)">LKR 18,360</td><td><span class="badge b-gray" style="font-size:9px">Booking.com</span></td><td><span class="badge b-amber">Pending</span></td><td><div style="display:flex;gap:3px"><button class="btn primary xs">Accept</button><button class="btn xs">✕</button></div></td></tr>
+              <tr><td class="mono">#BK-0212</td><td><div class="td-n">Priya Sharma</div><div class="td-s">3 guests</div></td><td>Suite A</td><td class="mono">Apr 18</td><td class="mono">Apr 21</td><td>3</td><td class="bold" style="color:var(--teal)">LKR 27,540</td><td><span class="badge b-teal" style="font-size:9px">PearlWay</span></td><td><span class="badge b-green">Confirmed</span></td><td><button class="btn ghost xs">View</button></td></tr>
+              <tr><td class="mono">#BK-0211</td><td><div class="td-n">David Chen</div><div class="td-s">2 guests</div></td><td>Room 1</td><td class="mono">Apr 16</td><td class="mono">Apr 18</td><td>2</td><td class="bold" style="color:var(--teal)">LKR 18,360</td><td><span class="badge b-purple" style="font-size:9px">Airbnb</span></td><td><span class="badge b-teal">Checked in</span></td><td><button class="btn ghost xs">View</button></td></tr>
+              <tr><td class="mono">#BK-0210</td><td><div class="td-n">Sophie Müller</div><div class="td-s">4 guests</div></td><td>Suite A</td><td class="mono">Apr 12</td><td class="mono">Apr 15</td><td>3</td><td class="bold" style="color:var(--teal)">LKR 29,250</td><td><span class="badge b-teal" style="font-size:9px">PearlWay</span></td><td><span class="badge b-gray">Completed</span></td><td><button class="btn ghost xs">Invoice</button></td></tr>
+            </tbody>
+          </table>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-top:1px solid var(--bdr);font-size:11px;color:var(--ink4)">
+            <span>Showing 5 of 22 bookings</span>
+            <div style="display:flex;gap:3px">
+              <button class="btn ghost xs">‹ Prev</button>
+              <button class="btn primary xs">1</button>
+              <button class="btn ghost xs">2</button>
+              <button class="btn ghost xs">3</button>
+              <button class="btn ghost xs">Next ›</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="screen-label">Host — Bookings</div>
+</div>
+
+<!-- ─────────── HOST: CALENDAR ─────────── -->
+<div class="screen-wrap" id="h-calendar" style="display:none">
+  <div class="dframe"><div class="dscreen" style="display:flex;height:560px">
+    <div class="dsidebar">
+      <div class="dsbrand"><div class="dslogo">PearlWay</div><div class="dstag">Host portal</div></div>
+      <div class="dssec">Main</div>
+      <div class="dsitem">📊 Overview</div>
+      <div class="dsitem">📅 Bookings<span class="dsbadge">4</span></div>
+      <div class="dsitem on">🗓 Calendar</div>
+      <div class="dssec">Property</div>
+      <div class="dsitem">🛏 Rooms & pricing</div>
+      <div class="dsitem">⭐ Reviews</div>
+    </div>
+    <div class="dsmain">
+      <div class="dstopbar">
+        <div><div class="dttitle">Availability calendar</div><div class="dtsub">April 2026 · Ella Rock Villa</div></div>
+        <div style="display:flex;gap:6px">
+          <button class="btn sm">‹ Mar</button>
+          <button class="btn primary sm">April 2026</button>
+          <button class="btn sm">May ›</button>
+        </div>
+      </div>
+      <div class="dcontent" style="overflow-y:auto">
+        <div class="dgrid2 gap">
+          <div class="card">
+            <div class="ctitle">Suite A — Availability</div>
+            <div class="cal-strip" id="cal1"></div>
+            <div style="display:flex;gap:10px;margin-top:10px;font-size:10px">
+              <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;background:var(--amber-lt);border-radius:50%"></div>Booked</div>
+              <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;background:var(--teal-bg);border-radius:50%"></div>Partially</div>
+              <div style="display:flex;align-items:center;gap:4px"><div style="width:12px;height:12px;background:var(--teal);border-radius:50%"></div>Selected</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ctitle">Room 2 — Availability</div>
+            <div class="cal-strip" id="cal2"></div>
+          </div>
+        </div>
+        <div class="dgrid2 gap">
+          <div class="card">
+            <div class="ctitle">Block dates (Suite A)</div>
+            <div class="fg" style="gap:8px;margin-bottom:10px">
+              <div class="fgrp" style="margin:0"><label class="flbl">From</label><input class="fi" style="font-size:12px" value="Apr 30, 2026"></div>
+              <div class="fgrp" style="margin:0"><label class="flbl">To</label><input class="fi" style="font-size:12px" value="May 5, 2026"></div>
+            </div>
+            <div class="fgrp" style="margin-bottom:10px"><label class="flbl">Reason</label><select class="fsel" style="font-size:12px"><option>Owner use</option><option>Maintenance</option><option>Holiday</option></select></div>
+            <button class="btn primary sm">Block these dates</button>
+          </div>
+          <div class="card">
+            <div class="ctitle">Upcoming check-ins</div>
+            <div class="drow"><span class="dlbl">Apr 18 — David Chen</span><span class="badge b-teal" style="font-size:9.5px">Today</span></div>
+            <div class="drow"><span class="dlbl">Apr 22 — Emma Wilson</span><span class="badge b-amber" style="font-size:9.5px">4 days</span></div>
+            <div class="drow"><span class="dlbl">Apr 26 — James Tan</span><span class="badge b-gray" style="font-size:9.5px">8 days</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="screen-label">Host — Calendar</div>
+</div>
+
+<!-- ─────────── HOST: ROOMS ─────────── -->
+<div class="screen-wrap" id="h-rooms" style="display:none">
+  <div class="dframe"><div class="dscreen" style="display:flex;height:560px">
+    <div class="dsidebar">
+      <div class="dsbrand"><div class="dslogo">PearlWay</div><div class="dstag">Host portal</div></div>
+      <div class="dssec">Main</div>
+      <div class="dsitem">📊 Overview</div>
+      <div class="dsitem">📅 Bookings<span class="dsbadge">4</span></div>
+      <div class="dsitem">🗓 Calendar</div>
+      <div class="dssec">Property</div>
+      <div class="dsitem on">🛏 Rooms & pricing</div>
+    </div>
+    <div class="dsmain">
+      <div class="dstopbar">
+        <div><div class="dttitle">Rooms & pricing</div><div class="dtsub">3 rooms listed</div></div>
+        <div style="display:flex;gap:6px"><button class="btn primary sm">+ Add room</button></div>
+      </div>
+      <div class="dcontent" style="overflow-y:auto">
+        <div class="room-card">
+          <div class="room-icon">🛏</div>
+          <div style="flex:1"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Suite A — Mountain view</div><div style="font-size:11.5px;color:var(--ink4);margin-top:2px">King bed · Sleeps 4 · Pool access · Private balcony</div><div style="display:flex;gap:6px;margin-top:6px"><span class="badge b-green">Available</span><span class="badge b-teal">SLTDA Listed</span></div></div>
+          <div style="display:flex;align-items:center;gap:10px"><div style="text-align:right"><div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--teal)">LKR 9,750</div><div style="font-size:10px;color:var(--ink4)">/night (incl. tax)</div></div><div style="display:flex;flex-direction:column;gap:4px"><button class="btn sm">Edit</button><button class="btn ghost sm">Preview</button></div></div>
+        </div>
+        <div class="room-card">
+          <div class="room-icon">🛏</div>
+          <div style="flex:1"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Room 2 — Garden view</div><div style="font-size:11.5px;color:var(--ink4);margin-top:2px">Double bed · Sleeps 2 · Shared pool · Patio</div><div style="display:flex;gap:6px;margin-top:6px"><span class="badge b-amber">Booked Apr 16–18</span></div></div>
+          <div style="display:flex;align-items:center;gap:10px"><div style="text-align:right"><div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--teal)">LKR 6,825</div><div style="font-size:10px;color:var(--ink4)">/night (incl. tax)</div></div><div style="display:flex;flex-direction:column;gap:4px"><button class="btn sm">Edit</button><button class="btn ghost sm">Preview</button></div></div>
+        </div>
+        <div class="room-card">
+          <div class="room-icon">🏠</div>
+          <div style="flex:1"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Entire villa — Full property</div><div style="font-size:11.5px;color:var(--ink4);margin-top:2px">3 beds · Sleeps 8 · Exclusive pool · Full kitchen</div><div style="display:flex;gap:6px;margin-top:6px"><span class="badge b-green">Available</span></div></div>
+          <div style="display:flex;align-items:center;gap:10px"><div style="text-align:right"><div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--teal)">LKR 22,750</div><div style="font-size:10px;color:var(--ink4)">/night (incl. tax)</div></div><div style="display:flex;flex-direction:column;gap:4px"><button class="btn sm">Edit</button><button class="btn ghost sm">Preview</button></div></div>
+        </div>
+        <div class="card gap">
+          <div class="ctitle">Dynamic pricing rules</div>
+          <div class="fg">
+            <div class="fgrp" style="margin:0"><label class="flbl">Weekend uplift</label><input class="fi" style="font-size:12px" value="+ 20%"></div>
+            <div class="fgrp" style="margin:0"><label class="flbl">Holiday season uplift</label><input class="fi" style="font-size:12px" value="+ 35%"></div>
+            <div class="fgrp" style="margin:0"><label class="flbl">Last-minute discount (48h)</label><input class="fi" style="font-size:12px" value="- 15%"></div>
+            <div class="fgrp" style="margin:0"><label class="flbl">Long-stay discount (7+ nights)</label><input class="fi" style="font-size:12px" value="- 10%"></div>
+          </div>
+          <button class="btn primary sm" style="margin-top:8px">Save pricing rules</button>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="screen-label">Host — Rooms & pricing</div>
+</div>
+
+<!-- ─────────── HOST: GUESTS ─────────── -->
+<div class="screen-wrap" id="h-guests" style="display:none">
+  <div class="dframe"><div class="dscreen" style="display:flex;height:560px">
+    <div class="dsidebar">
+      <div class="dsbrand"><div class="dslogo">PearlWay</div><div class="dstag">Host portal</div></div>
+      <div class="dssec">Main</div>
+      <div class="dsitem">📊 Overview</div>
+      <div class="dsitem">📅 Bookings<span class="dsbadge">4</span></div>
+      <div class="dsitem">🗓 Calendar</div>
+      <div class="dssec">Property</div>
+      <div class="dsitem">🛏 Rooms & pricing</div>
+      <div class="dsitem">⭐ Reviews</div>
+      <div class="dssec">Finance</div>
+      <div class="dsitem">💰 Earnings</div>
+      <div class="dsitem on">👥 Guests</div>
+    </div>
+    <div class="dsmain">
+      <div class="dstopbar">
+        <div><div class="dttitle">Guests</div><div class="dtsub">142 total guests</div></div>
+        <div style="display:flex;gap:6px"><div class="dsearch" style="width:180px"><input placeholder="Search guests..."></div></div>
+      </div>
+      <div class="dcontent" style="overflow-y:auto">
+        <div class="stat-grid sg3 gap">
+          <div class="stat"><div class="slbl">Total guests (Apr)</div><div class="sval t">38</div><div class="sdelta up">↑ 8 vs Mar</div></div>
+          <div class="stat"><div class="slbl">Repeat guests</div><div class="sval">12</div><div class="sdelta neu">32% return rate</div></div>
+          <div class="stat"><div class="slbl">Top nationality</div><div class="sval" style="font-size:18px">🇬🇧 UK</div><div class="sdelta neu">28% of guests</div></div>
+        </div>
+        <div class="dtbl">
+          <table>
+            <thead><tr><th>Guest</th><th>Country</th><th>Stay</th><th>Room</th><th>Total paid</th><th>Rating left</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="av av-sm av-amber">EW</div><div><div class="td-n">Emma Wilson</div><div class="td-s">emma@email.com</div></div></div></td><td>🇬🇧 UK</td><td class="mono">Apr 22–25</td><td>Suite A</td><td class="bold" style="color:var(--teal)">LKR 27,540</td><td class="muted">—</td><td><span class="badge b-amber">Upcoming</span></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="av av-sm av-teal">DC</div><div><div class="td-n">David Chen</div><div class="td-s">david@email.com</div></div></div></td><td>🇸🇬 Singapore</td><td class="mono">Apr 16–18</td><td>Room 2</td><td class="bold" style="color:var(--teal)">LKR 18,360</td><td style="color:var(--gold)">⭐ 5.0</td><td><span class="badge b-teal">Checked in</span></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="av av-sm av-gold">PS</div><div><div class="td-n">Priya Sharma</div><div class="td-s">priya@email.com</div></div></div></td><td>🇩🇪 Germany</td><td class="mono">Apr 18–21</td><td>Suite A</td><td class="bold" style="color:var(--teal)">LKR 27,540</td><td style="color:var(--gold)">⭐ 4.8</td><td><span class="badge b-green">Confirmed</span></td></tr>
+              <tr><td><div style="display:flex;align-items:center;gap:8px"><div class="av av-sm av-purple">SM</div><div><div class="td-n">Sophie Müller</div><div class="td-s">sophie@email.com</div></div></div></td><td>🇩🇪 Germany</td><td class="mono">Apr 12–15</td><td>Suite A</td><td class="bold" style="color:var(--teal)">LKR 29,250</td><td style="color:var(--gold)">⭐ 5.0</td><td><span class="badge b-gray">Completed</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="screen-label">Host — Guests</div>
+</div>
+
+<!-- ─────────── HOST: EARNINGS ─────────── -->
+<div class="screen-wrap" id="h-earnings" style="display:none">
+  <div class="dframe"><div class="dscreen" style="display:flex;height:560px">
+    <div class="dsidebar">
+      <div class="dsbrand"><div class="dslogo">PearlWay</div><div class="dstag">Host portal</div></div>
+      <div class="dssec">Main</div>
+      <div class="dsitem">📊 Overview</div>
+      <div class="dsitem">📅 Bookings</div>
+      <div class="dsitem">🗓 Calendar</div>
+      <div class="dssec">Finance</div>
+      <div class="dsitem on">💰 Earnings</div>
+      <div class="dsitem">👥 Guests</div>
+    </div>
+    <div class="dsmain">
+      <div class="dstopbar">
+        <div><div class="dttitle">Earnings</div><div class="dtsub">Financial overview</div></div>
+        <div style="display:flex;gap:6px">
+          <select class="fsel" style="width:120px;font-size:11.5px"><option>April 2026</option><option>March 2026</option><option>Q1 2026</option></select>
+          <button class="btn sm">Export</button>
+          <button class="btn primary sm">Request payout</button>
+        </div>
+      </div>
+      <div class="dcontent" style="overflow-y:auto">
+        <div class="earn-card gap">
+          <div class="earn-label">Net earnings — April 2026</div>
+          <div class="earn-val">LKR 166,050</div>
+          <div class="earn-sub">After PearlWay 10% commission (LKR 18,450) deducted</div>
+          <div class="earn-grid">
+            <div class="earn-cell"><div class="eclbl">Gross bookings</div><div class="ecval">LKR 184,500</div></div>
+            <div class="earn-cell"><div class="eclbl">Platform fee (10%)</div><div class="ecval">−LKR 18,450</div></div>
+            <div class="earn-cell"><div class="eclbl">Paid out</div><div class="ecval">LKR 127,550</div></div>
+            <div class="earn-cell"><div class="eclbl">Pending payout</div><div class="ecval">LKR 38,500</div></div>
+          </div>
+        </div>
+        <div class="dgrid2 gap">
+          <div class="card">
+            <div class="ctitle">Monthly revenue trend (LKR)</div>
+            <div class="barchart" id="bc2" style="height:80px"></div>
+          </div>
+          <div class="card">
+            <div class="ctitle">Payout schedule</div>
+            <div class="drow"><span class="dlbl">Next payout date</span><span class="bold">Apr 20, 2026</span></div>
+            <div class="drow"><span class="dlbl">Amount</span><span class="bold" style="color:var(--teal)">LKR 38,500</span></div>
+            <div class="drow"><span class="dlbl">Bank account</span><span class="bold">BOC ****4521</span></div>
+            <div class="drow"><span class="dlbl">Payout frequency</span><span class="bold">Weekly</span></div>
+            <div class="drow" style="border:none"><span class="dlbl">Method</span><span class="bold">Bank transfer</span></div>
+          </div>
+        </div>
+        <div class="dtbl">
+          <div class="dtbl-hdr"><span class="dtbl-title">Transaction history</span></div>
+          <table>
+            <thead><tr><th>Date</th><th>Guest</th><th>Gross</th><th>Fee (10%)</th><th>Net</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">Apr 15</td><td>Priya Sharma</td><td>LKR 27,540</td><td class="muted">−LKR 2,754</td><td class="bold" style="color:var(--teal)">LKR 24,786</td><td><span class="badge b-green">Paid</span></td></tr>
+              <tr><td class="mono">Apr 12</td><td>Sophie Müller</td><td>LKR 29,250</td><td class="muted">−LKR 2,925</td><td class="bold" style="color:var(--teal)">LKR 26,325</td><td><span class="badge b-green">Paid</span></td></tr>
+              <tr><td class="mono">Apr 8</td><td>Alex Brown</td><td>LKR 18,360</td><td class="muted">−LKR 1,836</td><td class="bold" style="color:var(--teal)">LKR 16,524</td><td><span class="badge b-green">Paid</span></td></tr>
+              <tr><td class="mono">Apr 22</td><td>Emma Wilson</td><td>LKR 27,540</td><td class="muted">−LKR 2,754</td><td class="bold" style="color:var(--amber-dk)">LKR 24,786</td><td><span class="badge b-amber">Pending</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="screen-label">Host — Earnings</div>
+</div>
+
+<!-- ─────────── HOST: REVIEWS ─────────── -->
+<div class="screen-wrap" id="h-reviews" style="display:none">
+  <div class="dframe"><div class="dscreen" style="display:flex;height:560px">
+    <div class="dsidebar">
+      <div class="dsbrand"><div class="dslogo">PearlWay</div><div class="dstag">Host portal</div></div>
+      <div class="dssec">Property</div>
+      <div class="dsitem">🛏 Rooms & pricing</div>
+      <div class="dsitem on">⭐ Reviews</div>
+      <div class="dsitem">📋 My listings</div>
+    </div>
+    <div class="dsmain">
+      <div class="dstopbar">
+        <div><div class="dttitle">Reviews</div><div class="dtsub">124 total · 4.9 average</div></div>
+        <div style="display:flex;gap:6px"><button class="btn sm">Export</button></div>
+      </div>
+      <div class="dcontent" style="overflow-y:auto">
+        <div class="dgrid2 gap">
+          <div class="card">
+            <div class="ctitle">Rating breakdown</div>
+            <div class="prog-row"><span class="prog-lbl">Cleanliness</span><div class="prog-track"><div class="prog-fill" style="width:97%"></div></div><span class="prog-val" style="color:var(--gold)">⭐ 4.9</span></div>
+            <div class="prog-row"><span class="prog-lbl">Location</span><div class="prog-track"><div class="prog-fill" style="width:98%"></div></div><span class="prog-val" style="color:var(--gold)">⭐ 4.9</span></div>
+            <div class="prog-row"><span class="prog-lbl">Value</span><div class="prog-track"><div class="prog-fill" style="width:90%"></div></div><span class="prog-val" style="color:var(--gold)">⭐ 4.5</span></div>
+            <div class="prog-row"><span class="prog-lbl">Communication</span><div class="prog-track"><div class="prog-fill" style="width:100%"></div></div><span class="prog-val" style="color:var(--gold)">⭐ 5.0</span></div>
+            <div class="prog-row" style="margin:0"><span class="prog-lbl">Check-in</span><div class="prog-track"><div class="prog-fill" style="width:96%"></div></div><span class="prog-val" style="color:var(--gold)">⭐ 4.8</span></div>
+          </div>
+          <div class="card">
+            <div class="ctitle">Star distribution</div>
+            <div class="prog-row"><span class="prog-lbl">⭐⭐⭐⭐⭐ (5 stars)</span><div class="prog-track"><div class="prog-fill" style="width:85%"></div></div><span class="prog-val">105</span></div>
+            <div class="prog-row"><span class="prog-lbl">⭐⭐⭐⭐ (4 stars)</span><div class="prog-track"><div class="prog-fill" style="width:14%"></div></div><span class="prog-val">17</span></div>
+            <div class="prog-row"><span class="prog-lbl">⭐⭐⭐ (3 stars)</span><div class="prog-track"><div class="prog-fill" style="width:2%"></div></div><span class="prog-val">2</span></div>
+            <div class="prog-row" style="margin:0"><span class="prog-lbl">⭐⭐ or below</span><div class="prog-track"><div class="prog-fill" style="width:0%"></div></div><span class="prog-val">0</span></div>
+          </div>
+        </div>
+        <div class="dtbl">
+          <div class="dtbl-hdr"><span class="dtbl-title">Recent reviews</span></div>
+          <div style="padding:0 12px">
+            <div class="review-item">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="av av-sm av-amber">SM</div><div><div style="font-size:12px;font-weight:700;color:var(--ink)">Sophie Müller</div><div style="font-size:10px;color:var(--ink4)">Apr 12–15 · Suite A</div></div><div style="margin-left:auto;color:var(--gold);font-size:12px;font-weight:700">⭐ 5.0</div></div>
+              <div class="review-text">"Absolutely stunning views and Sunil was the most welcoming host. The pool overlooking the valley at sunrise was magical. Will definitely return!"</div>
+            </div>
+            <div class="review-item">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="av av-sm av-teal">DC</div><div><div style="font-size:12px;font-weight:700;color:var(--ink)">David Chen</div><div style="font-size:10px;color:var(--ink4)">Apr 16–18 · Room 2</div></div><div style="margin-left:auto;color:var(--gold);font-size:12px;font-weight:700">⭐ 5.0</div></div>
+              <div class="review-text">"Perfect location, spotlessly clean, and Sunil gave great tips for hiking Ella Rock. The breakfast was a real highlight — homemade hoppers!"</div>
+            </div>
+            <div class="review-item" style="border:none">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><div class="av av-sm av-gold">AB</div><div><div style="font-size:12px;font-weight:700;color:var(--ink)">Alex Brown</div><div style="font-size:10px;color:var(--ink4)">Apr 8–10 · Suite A</div></div><div style="margin-left:auto;color:var(--gold);font-size:12px;font-weight:700">⭐ 4.8</div></div>
+              <div class="review-text">"Incredible property. Only minor thing was the WiFi was slow on day 2, but Sunil fixed it immediately. Great value for what you get."</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="screen-label">Host — Reviews</div>
+</div>
+
+<!-- ─────────── HOST: LISTINGS ─────────── -->
+<div class="screen-wrap" id="h-listings" style="display:none">
+  <div class="dframe"><div class="dscreen" style="display:flex;height:560px">
+    <div class="dsidebar">
+      <div class="dsbrand"><div class="dslogo">PearlWay</div><div class="dstag">Host portal</div></div>
+      <div class="dssec">Property</div>
+      <div class="dsitem">🛏 Rooms & pricing</div>
+      <div class="dsitem">⭐ Reviews</div>
+      <div class="dsitem on">📋 My listings</div>
+    </div>
+    <div class="dsmain">
+      <div class="dstopbar">
+        <div><div class="dttitle">My listings</div><div class="dtsub">1 property · 3 rooms · 1 vehicle</div></div>
+        <div style="display:flex;gap:6px"><button class="btn sm">+ Add vehicle</button><button class="btn primary sm">+ Add listing</button></div>
+      </div>
+      <div class="dcontent" style="overflow-y:auto">
+        <div style="font-size:11px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Property</div>
+        <div class="card gap">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:64px;height:64px;border-radius:14px;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0">🌿</div>
+            <div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--ink)">Ella Rock Villa</div><div style="font-size:12px;color:var(--ink4);margin-top:2px">📍 Ella, Badulla · 3 rooms listed</div><div style="display:flex;gap:6px;margin-top:6px"><span class="badge b-green">Live</span><span class="badge b-teal">SLTDA Verified</span><span class="badge b-gold">⭐ 4.9 Superhost</span></div></div>
+            <div style="text-align:right"><div style="font-size:12px;color:var(--ink4)">Profile views</div><div style="font-family:var(--font-d);font-size:22px;font-weight:700;color:var(--teal)">1,248</div><div style="font-size:10.5px;color:var(--ink4)">this month</div></div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Vehicle listing</div>
+        <div class="card gap">
+          <div style="display:flex;align-items:center;gap:12px">
+            <div style="width:52px;height:52px;border-radius:12px;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🚗</div>
+            <div style="flex:1"><div style="font-size:13.5px;font-weight:700;color:var(--ink)">Toyota Axio 2020</div><div style="font-size:11.5px;color:var(--ink4);margin-top:2px">5 seats · A/C · Insured · LKR 6,500/day</div><div style="display:flex;gap:6px;margin-top:5px"><span class="badge b-green">Available</span></div></div>
+            <div style="display:flex;gap:6px"><button class="btn sm">Edit</button><button class="btn ghost sm">Pause</button></div>
+          </div>
+        </div>
+        <div style="font-size:11px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Add new listing type</div>
+        <div class="dgrid2">
+          <div style="border:2px dashed var(--bdr2);border-radius:var(--r-lg);padding:18px;text-align:center;cursor:pointer;transition:all .14s" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--bdr2)'">
+            <div style="font-size:28px;margin-bottom:6px">🏠</div>
+            <div style="font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:3px">Add another property</div>
+            <div style="font-size:11px;color:var(--ink4)">Guesthouse, villa, homestay</div>
+          </div>
+          <div style="border:2px dashed var(--bdr2);border-radius:var(--r-lg);padding:18px;text-align:center;cursor:pointer;transition:all .14s" onmouseover="this.style.borderColor='var(--teal)'" onmouseout="this.style.borderColor='var(--bdr2)'">
+            <div style="font-size:28px;margin-bottom:6px">🎭</div>
+            <div style="font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:3px">List an experience</div>
+            <div style="font-size:11px;color:var(--ink4)">Cooking, hiking, tours</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="screen-label">Host — My listings</div>
+</div>
+
+<!-- ─────────── HOST: SETTINGS ─────────── -->
+<div class="screen-wrap" id="h-settings" style="display:none">
+  <div class="dframe"><div class="dscreen" style="display:flex;height:560px">
+    <div class="dsidebar">
+      <div class="dsbrand"><div class="dslogo">PearlWay</div><div class="dstag">Host portal</div></div>
+      <div class="dssec">System</div>
+      <div class="dsitem on">⚙ Settings</div>
+    </div>
+    <div class="dsmain">
+      <div class="dstopbar">
+        <div><div class="dttitle">Settings</div></div>
+        <div style="display:flex;gap:6px"><button class="btn primary sm">Save changes</button></div>
+      </div>
+      <div style="display:flex;height:calc(560px - 52px)">
+        <div class="dsettings-nav">
+          <div class="dsn-group">Profile</div>
+          <div class="dsn-item on">Host profile</div>
+          <div class="dsn-item">Property info</div>
+          <div class="dsn-item">Photo gallery</div>
+          <div class="dsn-group">Bookings</div>
+          <div class="dsn-item">Booking rules</div>
+          <div class="dsn-item">House rules</div>
+          <div class="dsn-item">Cancellation policy</div>
+          <div class="dsn-group">Payments</div>
+          <div class="dsn-item">Bank account</div>
+          <div class="dsn-item">Payout schedule</div>
+          <div class="dsn-group">Notifications</div>
+          <div class="dsn-item">Alerts & SMS</div>
+          <div class="dsn-item">WhatsApp</div>
+          <div class="dsn-group">Legal</div>
+          <div class="dsn-item">SLTDA registration</div>
+          <div class="dsn-item">Tax details</div>
+        </div>
+        <div class="dsettings-body">
+          <div class="fg" style="margin-bottom:12px">
+            <div class="fsec">Host profile</div>
+            <div class="fgrp" style="margin:0"><label class="flbl">Full name</label><input class="fi" style="font-size:12.5px" value="Sunil Karunaratne"></div>
+            <div class="fgrp" style="margin:0"><label class="flbl">Phone (WhatsApp)</label><input class="fi" style="font-size:12.5px" value="+94 77 123 4567"></div>
+            <div class="fgrp" style="margin:0"><label class="flbl">Email</label><input class="fi" style="font-size:12.5px" value="sunil@ellarockvilla.lk"></div>
+            <div class="fgrp" style="margin:0"><label class="flbl">NIC / Passport</label><input class="fi" style="font-size:12.5px" value="**********V"></div>
+            <div class="fgrp" style="grid-column:1/-1;margin:0"><label class="flbl">About you</label><textarea class="fi" rows="2" style="font-size:12.5px;resize:none">Born and raised in Ella. I love sharing this beautiful valley with guests from around the world.</textarea></div>
+          </div>
+          <div class="card" style="margin-bottom:12px">
+            <div class="ctitle">Notification preferences</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-size:12.5px;font-weight:500;color:var(--ink)">WhatsApp booking alerts</div><div style="font-size:11px;color:var(--ink4)">Instant message when someone books</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-size:12.5px;font-weight:500;color:var(--ink)">Email daily summary</div><div style="font-size:11px;color:var(--ink4)">End-of-day report each evening</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bdr)"><div><div style="font-size:12.5px;font-weight:500;color:var(--ink)">SMS check-in reminder</div><div style="font-size:11px;color:var(--ink4)">SMS 24h before guest arrives</div></div><div class="tog" onclick="this.classList.toggle('on')"></div></div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0"><div><div style="font-size:12.5px;font-weight:500;color:var(--ink)">New review notifications</div></div><div class="tog on" onclick="this.classList.toggle('on')"></div></div>
+          </div>
+          <div class="card">
+            <div class="ctitle">Booking rules</div>
+            <div class="fg" style="gap:8px">
+              <div class="fgrp" style="margin:0"><label class="flbl">Minimum stay</label><select class="fsel" style="font-size:12px"><option>1 night</option><option selected>2 nights</option><option>3 nights</option></select></div>
+              <div class="fgrp" style="margin:0"><label class="flbl">Check-in time</label><select class="fsel" style="font-size:12px"><option>12:00 PM</option><option selected>2:00 PM</option><option>3:00 PM</option></select></div>
+              <div class="fgrp" style="margin:0"><label class="flbl">Checkout time</label><select class="fsel" style="font-size:12px"><option>10:00 AM</option><option selected>11:00 AM</option><option>12:00 PM</option></select></div>
+              <div class="fgrp" style="margin:0"><label class="flbl">Max guests</label><select class="fsel" style="font-size:12px"><option>4</option><option selected>6</option><option>8</option></select></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="screen-label">Host — Settings</div>
+</div>
+
+<!-- ─────────── HOST: VEHICLE MANAGEMENT ─────────── -->
+<div class="screen-wrap" id="h-vehicles" style="display:none">
+  <div class="dframe"><div class="dscreen" style="display:flex;height:560px">
+    <div class="dsidebar">
+      <div class="dsbrand"><div class="dslogo">PearlWay</div><div class="dstag">Host portal</div></div>
+      <div class="dssec">System</div>
+      <div class="dsitem on">🚗 Vehicle mgmt</div>
+      <div class="dsitem">⚙ Settings</div>
+    </div>
+    <div class="dsmain">
+      <div class="dstopbar">
+        <div><div class="dttitle">Vehicle management</div><div class="dtsub">2 vehicles listed</div></div>
+        <div style="display:flex;gap:6px"><button class="btn primary sm">+ List vehicle</button></div>
+      </div>
+      <div class="dcontent" style="overflow-y:auto">
+        <div class="stat-grid sg3 gap">
+          <div class="stat"><div class="slbl">Bookings (Apr)</div><div class="sval t">18</div><div class="sdelta up">↑ 4 vs Mar</div></div>
+          <div class="stat"><div class="slbl">Vehicle revenue</div><div class="sval">LKR 42,000</div><div class="sdelta up">After 12% fee</div></div>
+          <div class="stat"><div class="slbl">Avg utilisation</div><div class="sval">64%</div><div class="sdelta neu">of available days</div></div>
+        </div>
+        <div class="room-card gap">
+          <div style="width:56px;height:56px;border-radius:14px;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🚗</div>
+          <div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--ink)">Toyota Axio 2020</div><div style="font-size:11.5px;color:var(--ink4);margin-top:2px">Reg: CAR-1234 · 5 seats · A/C · Insured</div><div style="display:flex;gap:6px;margin-top:6px"><span class="badge b-green">Available today</span><span class="badge b-teal">SLTDA Reg.</span></div></div>
+          <div style="display:flex;align-items:center;gap:10px"><div style="text-align:right"><div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--teal)">LKR 6,500</div><div style="font-size:10px;color:var(--ink4)">/day</div></div><div style="display:flex;flex-direction:column;gap:4px"><button class="btn sm">Edit</button><button class="btn ghost sm">Calendar</button></div></div>
+        </div>
+        <div class="room-card gap">
+          <div style="width:56px;height:56px;border-radius:14px;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0">🛺</div>
+          <div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--ink)">Tuk-tuk — Self managed</div><div style="font-size:11.5px;color:var(--ink4);margin-top:2px">3 seats · Local routes · Driver: Nimal</div><div style="display:flex;gap:6px;margin-top:6px"><span class="badge b-amber">Booked Apr 16</span></div></div>
+          <div style="display:flex;align-items:center;gap:10px"><div style="text-align:right"><div style="font-family:var(--font-d);font-size:18px;font-weight:700;color:var(--teal)">LKR 2,200</div><div style="font-size:10px;color:var(--ink4)">/day</div></div><div style="display:flex;flex-direction:column;gap:4px"><button class="btn sm">Edit</button><button class="btn ghost sm">Calendar</button></div></div>
+        </div>
+        <div class="card">
+          <div class="ctitle">Add new vehicle</div>
+          <div class="fg" style="gap:8px;margin-bottom:10px">
+            <div class="fsec">Vehicle details</div>
+            <div class="fgrp" style="margin:0"><label class="flbl">Vehicle type</label><select class="fsel" style="font-size:12.5px"><option>Car</option><option>Tuk-tuk</option><option>Motorbike</option><option>Van / Minibus</option><option>Bicycle</option></select></div>
+            <div class="fgrp" style="margin:0"><label class="flbl">Make & model</label><input class="fi" style="font-size:12.5px" placeholder="e.g. Toyota Axio 2021"></div>
+            <div class="fgrp" style="margin:0"><label class="flbl">Registration no.</label><input class="fi" style="font-size:12.5px" placeholder="e.g. ELL-1234"></div>
+            <div class="fgrp" style="margin:0"><label class="flbl">Price per day (LKR)</label><input class="fi" style="font-size:12.5px" placeholder="e.g. 5000"></div>
+            <div class="fgrp" style="margin:0;grid-column:1/-1"><label class="flbl">With driver?</label><select class="fsel" style="font-size:12.5px"><option>Self-drive</option><option>With driver</option><option>Both options</option></select></div>
+          </div>
+          <button class="btn primary sm">List this vehicle</button>
+        </div>
+      </div>
+    </div>
+  </div></div>
+  <div class="screen-label">Host — Vehicle mgmt</div>
+</div>
+
+</div><!-- /canvas -->
+
+<script>
+const ALL=['m-home','m-detail','m-vehicles','m-places','m-experiences','m-search','m-bookings','m-profile','m-map','m-checkout','m-notifs','h-overview','h-bookings','h-calendar','h-rooms','h-guests','h-earnings','h-reviews','h-listings','h-settings','h-vehicles'];
+
+function show(id){
+  document.querySelectorAll('.canvas .screen-wrap').forEach(el=>el.style.display='none');
+  const el=document.getElementById(id);
+  if(el){el.style.display='flex';el.style.animation='none';void el.offsetWidth;el.style.animation='fadeUp .3s ease both'}
+  document.querySelectorAll('.tn-btn').forEach(b=>{
+    b.classList.remove('on');
+    if(b.getAttribute('onclick')&&b.getAttribute('onclick').includes("'"+id+"'"))b.classList.add('on');
+  });
+  setTimeout(()=>{
+    buildBarChart('bc1',[22,38,45,62,55,70,68,80,72,88,65,48]);
+    buildBarChart('bc2',[92,115,98,142,128,155,163,175,168,184]);
+    buildCal('cal1',[[],[],[2,3,4],[],[8,9],[12,13,14,15,16],[18,19,20],[22,23,24],[26,27]],20);
+    buildCal('cal2',[[],[],[],[6,7],[10,11],[],[16,17],[20,21],[25,26]],22);
+  },100);
+}
+
+function buildBarChart(id,vals){
+  const el=document.getElementById(id);
+  if(!el||el.children.length)return;
+  const max=Math.max(...vals);
+  vals.forEach((v,i)=>{
+    const col=document.createElement('div');col.className='bcol';
+    const fill=document.createElement('div');fill.className='bfill'+(i===vals.length-1?' hi':'');
+    fill.style.height=Math.round(v/max*90)+'%';
+    col.appendChild(fill);el.appendChild(col);
+  });
+}
+
+function buildCal(id,bookedGroups,today){
+  const el=document.getElementById(id);
+  if(!el||el.children.length)return;
+  const days=['M','T','W','T','F','S','S'];
+  const booked=new Set();
+  bookedGroups.forEach(g=>g.forEach(d=>booked.add(d)));
+  for(let d=1;d<=30;d++){
+    const col=document.createElement('div');col.className='cal-day';
+    const wd=document.createElement('div');wd.className='cal-wd';wd.textContent=days[(d-1)%7];
+    const num=document.createElement('div');num.className='cal-num';num.textContent=d;
+    if(d===today)num.classList.add('on');
+    else if(booked.has(d))num.classList.add('bk');
+    col.appendChild(wd);col.appendChild(num);el.appendChild(col);
+  }
+}
+
+// Initial
+show('m-home');
+</script>
+
+</body></html>
